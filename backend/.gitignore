@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Local Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Prisma Generated Output / SQLite (if used)
+dev.db
+dev.db-journal
+
+# Test Coverage & Build Outputs
+coverage/
+dist/
+build/
+
+# OS / Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

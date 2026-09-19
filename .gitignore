@@ -1,0 +1,58 @@
+# ==========================================
+# Environment & Secrets (NEVER COMMIT)
+# ==========================================
+.env
+.env.local
+.env.*.local
+*.env
+*.key
+*.pem
+
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+.dart_tool/
+
+# ==========================================
+# Build & Output Artifacts
+# ==========================================
+build/
+dist/
+coverage/
+.gradle/
+**/build/
+**/generated/
+
+# ==========================================
+# Android Local Properties & Signing Keys
+# ==========================================
+mobile/local.properties
+mobile/.gradle/
+mobile/app/build/
+*.keystore
+*.jks
+
+# ==========================================
+# Flutter Build & Generated Artifacts
+# ==========================================
+admin/.dart_tool/
+admin/.flutter-plugins
+admin/.flutter-plugins-dependencies
+admin/build/
+
+# ==========================================
+# IDE & System Files
+# ==========================================
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Logs
+# ==========================================
+logs/
+*.log
+npm-debug.log*
