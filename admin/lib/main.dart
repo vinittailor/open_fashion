@@ -4,6 +4,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_typography.dart';
 import 'core/constants/breakpoints.dart';
+import 'features/auth/presentation/screens/register_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +57,18 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
           style: AppTypography.titleLarge(isDark),
         ),
         actions: [
+          // Quick Action to open Register / Invite User
+          TextButton.icon(
+            style: TextButton.styleFrom(foregroundColor: AppColors.accent),
+            icon: const Icon(Icons.person_add_outlined, size: 18),
+            label: const Text('INVITE USER', style: TextStyle(fontWeight: FontWeight.bold)),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
           // Theme Mode Toggle Button
           IconButton(
             icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
@@ -83,12 +96,12 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
             ),
             const VerticalDivider(thickness: 1, width: 1),
             Expanded(
-              child: _buildPlaceholderContent(isDark),
+              child: _buildBodyContent(isDark),
             ),
           ],
         ),
         // Mobile Layout (Single Column)
-        mobile: _buildPlaceholderContent(isDark),
+        mobile: _buildBodyContent(isDark),
       ),
       // Mobile Bottom Navigation Bar
       bottomNavigationBar: Breakpoints.isDesktop(context)
@@ -106,7 +119,12 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
     );
   }
 
-  Widget _buildPlaceholderContent(bool isDark) {
+  Widget _buildBodyContent(bool isDark) {
+    if (_selectedIndex == 3) {
+      // Customers module hosts the User Registration / Invitation Form directly
+      return const RegisterScreen();
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

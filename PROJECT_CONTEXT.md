@@ -66,23 +66,30 @@ open_fashion/
 ## 4. Sub-Application Status & Confirmed Specifications
 
 ### 4.1. `backend/`
-- **Current Status**: `Confirmed` (Foundation Complete & Live-Tested)
+- **Current Status**: `Confirmed` (Phase 0 Foundation Complete, DB Migrated, Redis Ready)
 - **Runtime & Tools**:
   - Node.js: `v26.7.0` (ES Modules) `[Confirmed]`
   - Express: `^5.2.1` `[Confirmed]`
-  - Prisma CLI & Client: `7.10.0` `[Confirmed]`
+  - Prisma CLI & Client: `7.10.0` with `@prisma/adapter-pg` `[Confirmed]`
+  - PostgreSQL Driver: `pg: ^8.13.3` `[Confirmed]`
+  - Redis Client: `ioredis: ^5.6.0` `[Confirmed]`
   - Docker Desktop: `29.8.0` `[Confirmed]`
-  - PostgreSQL Container: `postgres:16-alpine` on port `5432` `[Confirmed - Healthy]`
+  - PostgreSQL Container: `postgres:16-alpine` on host port `5433` -> internal `5432` `[Confirmed - Healthy & Migrated]`
   - Redis Container: `redis:7-alpine` on port `6379` `[Confirmed - Healthy]`
   - Socket.io: `^4.8.3` `[Confirmed]`
-  - Zod: `^4.6.5` / `^3.24.2` `[Confirmed]`
+  - Zod: `^3.24.2` `[Confirmed]`
   - Winston: `^3.19.0` `[Confirmed]`
-- **Known Entry Points**:
+- **Known Entry Points & Configs**:
   - `src/server.js` (HTTP + WebSocket Bootstrap) `[Confirmed]`
   - `src/app.js` (Express App Instance) `[Confirmed]`
+  - `src/config/prisma.js` (Prisma 7 Client Singleton & Pool) `[Confirmed]`
+  - `src/config/redis.js` (Redis Client & Event Listeners) `[Confirmed]`
+  - `prisma/schema.prisma` (11 Relational Models & Enums) `[Confirmed]`
+  - `prisma.config.js` (Prisma 7 Config & Migration Controller) `[Confirmed]`
 - **Confirmed Commands**:
   - `npm run dev`: Start dev server with `--watch --env-file=.env` `[Confirmed]`
-  - `npm test`: Vitest test runner `[Confirmed]`
+  - `npx prisma migrate dev`: Run Prisma migrations `[Confirmed]`
+  - `npx prisma generate`: Generate `@prisma/client` `[Confirmed]`
   - `docker compose up -d`: Launch PostgreSQL + Redis `[Confirmed]`
 - **Environment Variables (Names Only - No Values)**:
   - `NODE_ENV`, `PORT`, `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `JWT_REFRESH_SECRET`, `JWT_REFRESH_EXPIRES_IN`, `CORS_ORIGINS`

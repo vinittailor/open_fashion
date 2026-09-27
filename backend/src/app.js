@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { errorHandler, NotFoundError } from './middleware/errorHandler.js';
+import authRoutes from './routes/auth.routes.js';
 
 // Initialize Express 5 Application
 export const app = express();
@@ -53,7 +54,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// 6. Base API v1 Prefix Route (Placeholder for upcoming modules)
+// 6. Base API v1 Welcome Route
 app.get('/api/v1', (req, res) => {
   res.status(200).json({
     success: true,
@@ -61,10 +62,13 @@ app.get('/api/v1', (req, res) => {
   });
 });
 
-// 7. Catch-all 404 Route for Undefined Endpoints
+// 7. API Feature Slice Routes
+app.use('/api/v1/auth', authRoutes);
+
+// 8. Catch-all 404 Route for Undefined Endpoints
 app.use((req, res, next) => {
   next(new NotFoundError(`Cannot find endpoint [${req.method}] ${req.originalUrl} on this server`));
 });
 
-// 8. Central Global Error Handling Middleware
+// 9. Central Global Error Handling Middleware
 app.use(errorHandler);

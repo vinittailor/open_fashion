@@ -47,6 +47,7 @@ Always:
 - Inspect before editing.
 - Work on one file or one small, tightly related micro-task at a time.
 - Show the exact target path before presenting code.
+- **MANDATORY CLICKABLE FILE LINKS**: Every file path mentioned MUST be a clickable markdown link with the `file:///` URI scheme (e.g., `[backend/src/utils/password.js](file:///c:/Vicky/open_fashion/backend/src/utils/password.js)`). Never provide plain text paths.
 - Explain why the target file exists.
 - Let the user write the code unless the user explicitly requests automatic editing.
 - Do not modify unrelated files.

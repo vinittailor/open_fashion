@@ -1,162 +1,162 @@
-# Open Fashion — Step-by-Step Micro-Task Master Roadmap
+# Open Fashion — Micro-Slice Feature Master Roadmap
+
+> **Core Philosophy (Micro-Feature Vertical Slices)**:
+> We build each **individual capability** end-to-end:
+> `[1. Backend Endpoint & Logic]` ➔ `[2. Flutter Admin Visual UI]` ➔ `[3. Android Mobile Compose UI]`
+> This guarantees zero cognitive overload, immediate visual feedback, and rock-solid full-stack architecture mastery.
 
 > **Status Legend**:
 > - `[ ]` Not Started
 > - `[-]` In Progress
 > - `[x]` Completed
-> - `[?]` Blocked / Needs Decision
 
 ---
 
-## 🗺️ Master Execution Flow & Strategy
-Our development proceeds in structured, cohesive phases so each micro-task builds on the previous one without context gaps:
+## 🏗️ Phase 0: Workspace & Infrastructure Foundations (100% Completed)
 
-```
-[Phase 1: Project Foundations] ➔ [Phase 2: Database & Docker] ➔ [Phase 3: Core Design Systems] ➔ [Phase 4: End-to-End Auth] ➔ [Phase 5: Catalog] ...
-```
+### 0.1 Workspace Scaffolding & Design Systems
+- [x] **0.1.1**: Root Agent Protocol, Guidelines & ADRs (`/AGENTS.md`, `/ARCHITECTURE.md`, `/DECISIONS.md`)
+- [x] **0.1.2**: Backend Scaffolding (`package.json`, Express 5, Zod, Logger, Error Handler, Server)
+- [x] **0.1.3**: Flutter Admin Scaffolding (`pubspec.yaml`, Riverpod, Breakpoints, Color & Typography Tokens)
+- [x] **0.1.4**: Android Mobile Scaffolding (`libs.versions.toml`, Gradle, M3 Theme Tokens, Clean Architecture skeleton)
+- [x] **0.1.5**: Multi-Container Docker Infrastructure (`docker-compose.yml` - PostgreSQL 16 on port 5433 + Redis 7 on port 6379)
 
----
-
-## Phase 1: Workspace Foundations & Scaffolding (All 3 Apps)
-
-### 1.1 Documentation & Project Governance
-- [x] **Micro-Task 1.1.1**: Root Agent Protocol (`/AGENTS.md`)
-- [x] **Micro-Task 1.1.2**: Project Context & Living Repository State (`/PROJECT_CONTEXT.md`)
-- [x] **Micro-Task 1.1.3**: System Architecture Blueprint (`/ARCHITECTURE.md`)
-- [x] **Micro-Task 1.1.4**: Architecture Decision Records (`/DECISIONS.md` - ADR 001 to 004)
-- [x] **Micro-Task 1.1.5**: Backend Agent Guidelines (`/backend/AGENTS.md`)
-- [x] **Micro-Task 1.1.6**: Android Agent Guidelines (`/mobile/AGENTS.md`)
-- [x] **Micro-Task 1.1.7**: Flutter Admin Agent Guidelines (`/admin/AGENTS.md`)
-- [x] **Micro-Task 1.1.8**: Master Roadmap Checklist (`/ROADMAP_CHECKLIST.md`)
-- [x] **Micro-Task 1.1.9**: Antigravity Environment & Skill Inspection (Enabled 12 approved local skills)
-- [x] **Micro-Task 1.1.10**: Permanent Workspace Rule Configuration (`/.agents/rules/project-workflow.md`)
-- [ ] **Micro-Task 1.1.11**: Android Studio Companion Setup (Recommended on host machine for Compose Previews, Logcat & ADB)
-
-### 1.2 Flutter Admin App Foundation (`admin/`)
-- [x] **Micro-Task 1.2.1**: Scaffold Flutter multi-platform project (`flutter create --platforms=web,android,ios .`)
-- [x] **Micro-Task 1.2.2**: Configure `admin/pubspec.yaml` with Riverpod, Google Fonts, Dio, FlChart, Secure Storage
-- [x] **Micro-Task 1.2.3**: Create directory structure (`lib/core/`, `lib/features/`, `lib/shared/`)
-- [x] **Micro-Task 1.2.4**: Create Admin Design Tokens & Palette (`admin/lib/core/theme/app_colors.dart`)
-- [x] **Micro-Task 1.2.5**: Create Typography & Text Themes (`admin/lib/core/theme/app_typography.dart`)
-- [x] **Micro-Task 1.2.6**: Create Theme Provider & Responsive Breakpoints (`admin/lib/core/theme/app_theme.dart` & `breakpoints.dart`)
-- [x] **Micro-Task 1.2.7**: Create Root Responsive App Entry & Shell (`admin/lib/main.dart` with `ProviderScope`)
-
-### 1.3 Backend Foundation (`backend/`)
-- [x] **Micro-Task 1.3.1**: Initialize `backend/package.json` with ES Modules and core scripts (`dev`, `start`, `test`)
-- [x] **Micro-Task 1.3.2**: Install and configure runtime dependencies (`express@5`, `zod`, `dotenv`, `cors`, `helmet`, `morgan`, `winston`, `bcryptjs`, `jsonwebtoken`, `socket.io`, `ioredis`, `@prisma/client`, `prisma`, `vitest`, `supertest`)
-- [x] **Micro-Task 1.3.3**: Configure `backend/.gitignore` and `backend/.env.example` (Environment schema without secrets)
-- [x] **Micro-Task 1.3.4**: Configure local multi-container `backend/docker-compose.yml` (PostgreSQL 16 + Redis 7)
-- [x] **Micro-Task 1.3.5**: Implement fail-fast Environment Validator (`backend/src/config/env.js` using Zod)
-- [x] **Micro-Task 1.3.6**: Implement structured Logger utility (`backend/src/utils/logger.js`)
-- [x] **Micro-Task 1.3.7**: Implement standard API Error Classes & Global Error Handler (`backend/src/middleware/errorHandler.js`)
-- [x] **Micro-Task 1.3.8**: Implement Express 5 application instance (`backend/src/app.js` with security middleware & health check)
-- [x] **Micro-Task 1.3.9**: Implement HTTP + WebSocket Server bootstrap entry point (`backend/src/server.js`)
-
-### 1.4 Android Mobile Foundation (`mobile/`) ➔ 📍 CURRENT FOCUS
-- [x] **Micro-Task 1.4.1**: Update Version Catalog `mobile/gradle/libs.versions.toml` (Retrofit, OkHttp, Room, Coroutines, Navigation Compose)
-- [x] **Micro-Task 1.4.2**: Configure `mobile/app/build.gradle.kts` dependencies & plugins (KSP, Serialization)
-- [x] **Micro-Task 1.4.3**: Establish Clean Architecture package structure (`core/`, `domain/`, `data/`, `presentation/`)
-- [x] **Micro-Task 1.4.4**: Implement Open Fashion Compose M3 Design Tokens (`Color.kt`, `Type.kt`, `Theme.kt`)
+### 0.2 Database & Cache Client Infrastructure
+- [x] **0.2.1**: Enterprise Relational Schema (`backend/prisma/schema.prisma` - 11 models + enums)
+- [x] **0.2.2**: Prisma 7 Configuration (`backend/prisma.config.js`)
+- [x] **0.2.3**: Database Migration Applied (`init_ecommerce_schema` via Docker PostgreSQL)
+- [x] **0.2.4**: Prisma Client Singleton & Lifecycle Manager (`backend/src/config/prisma.js` with `@prisma/adapter-pg`)
+- [x] **0.2.5**: Redis Client Singleton & Event Manager (`backend/src/config/redis.js` with `ioredis`)
 
 ---
 
-## Phase 2: Database Schema & Relational Data Modeling
+## 🔐 Feature Slice 1: Authentication & User Accounts (Next Phase)
 
-### 2.1 Prisma 7 Configuration & Schemas (`backend/prisma/`)
-- [ ] **Micro-Task 2.1.1**: Initialize Prisma (`prisma/schema.prisma` with PostgreSQL datasource)
-- [ ] **Micro-Task 2.1.2**: Define User, Profile, and Role (`CUSTOMER`, `ADMIN`) models
-- [ ] **Micro-Task 2.1.3**: Define Category, Product, ProductVariant, and ProductImage models
-- [ ] **Micro-Task 2.1.4**: Define Cart, CartItem, Wishlist, and WishlistItem models
-- [ ] **Micro-Task 2.1.5**: Define Order, OrderItem, and Payment models
-- [ ] **Micro-Task 2.1.6**: Run first Prisma migration against Docker PostgreSQL
-- [ ] **Micro-Task 2.1.7**: Create database seed script (`backend/prisma/seed.js`) for demo luxury fashion products
+### 1.1 Micro-Slice: User Registration ➔ [COMPLETED]
+- [x] **1.1.1 [Backend]**: Password Hashing utility (Bcrypt) + Registration Zod Schema + POST `/api/v1/auth/register`
+- [x] **1.1.2 [Flutter Admin]**: Admin User Registration / Invitation Form
+- [x] **1.1.3 [Android Mobile]**: Customer Luxury Registration Screen (Compose M3 + MVI ViewModel)
 
-### 2.2 Redis Client & Cache Manager
-- [ ] **Micro-Task 2.2.1**: Implement Redis connection pool & event listeners (`backend/src/config/redis.js`)
-- [ ] **Micro-Task 2.2.2**: Implement Cache Service with TTL & Invalidation helpers (`backend/src/services/cache.service.js`)
+### 1.2 Micro-Slice: User Login & JWT Session Management ➔ 📍 STARTING HERE
+- [ ] **1.2.1 [Backend]**: JWT Signer/Verifier utility + Redis Refresh Token Whitelist + POST `/api/v1/auth/login` & POST `/api/v1/auth/refresh`
+- [ ] **1.2.2 [Flutter Admin]**: Responsive Admin Login Screen (Web & Mobile Layouts) + Riverpod AuthState + Secure Storage
+- [ ] **1.2.3 [Android Mobile]**: Customer Login Screen (Compose M3) + Encrypted Token DataStore + Auto-Login Flow
 
----
+### 1.3 Micro-Slice: Protected Routes & User Profile (`/me`)
+- [ ] **1.3.1 [Backend]**: JWT Auth Guard Middleware + Role-Based Access Guard (`ADMIN`/`CUSTOMER`) + GET & PATCH `/api/v1/users/me`
+- [ ] **1.3.2 [Flutter Admin]**: Admin Header Profile Chip, Role Badge & Logout Action
+- [ ] **1.3.3 [Android Mobile]**: Customer Profile Screen (Account info, Edit Profile, Logout bottom sheet)
 
-## Phase 3: Authentication & Authorization Flow (Full-Stack)
+### 1.4 Micro-Slice: Password Reset & Email Verification
+- [ ] **1.4.1 [Backend]**: SHA-256 Token Generator + Forgot Password + Reset Password + Verify Email endpoints
+- [ ] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation
+- [ ] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen
 
-### 3.1 Backend Auth Engine
-- [ ] **Micro-Task 3.1.1**: Password hashing and JWT token utility (`src/utils/password.js`, `src/utils/jwt.js`)
-- [ ] **Micro-Task 3.1.2**: Zod validation schemas for Register, Login, Refresh Token (`src/modules/auth/auth.schema.js`)
-- [ ] **Micro-Task 3.1.3**: Auth Repository & Auth Service with Redis Refresh Token rotation
-- [ ] **Micro-Task 3.1.4**: Auth Controller & Express Router (`/api/v1/auth`)
-- [ ] **Micro-Task 3.1.5**: JWT Authentication Middleware & RBAC Permission Middleware (`src/middleware/auth.js`)
-
-### 3.2 Flutter Admin Auth
-- [ ] **Micro-Task 3.2.1**: Dio HTTP Client with JWT interceptor & token refresh (`admin/lib/core/network/api_client.dart`)
-- [ ] **Micro-Task 3.2.2**: Auth State Notifier with Riverpod (`admin/lib/features/auth/providers/auth_provider.dart`)
-- [ ] **Micro-Task 3.2.3**: Responsive Admin Login Screen for Web & Mobile (`admin/lib/features/auth/screens/login_screen.dart`)
-
-### 3.3 Android Mobile Auth
-- [ ] **Micro-Task 3.3.1**: Encrypted Token DataStore (`mobile/app/.../core/storage/TokenStorage.kt`)
-- [ ] **Micro-Task 3.3.2**: Retrofit Auth Interceptor & API Service
-- [ ] **Micro-Task 3.3.3**: Auth Domain & Data Layer (`AuthRepositoryImpl.kt`, `LoginUseCase.kt`)
-- [ ] **Micro-Task 3.3.4**: Auth MVI Presentation (`AuthViewModel.kt`, `LoginScreen.kt` in Jetpack Compose)
+### 1.5 Micro-Slice: Admin User Management
+- [ ] **1.5.1 [Backend]**: Admin Users List API with Pagination, Role Filter & Soft Delete (`/api/v1/admin/users`)
+- [ ] **1.5.2 [Flutter Admin]**: Interactive User Management Data Table (View registered customers, toggle active/ban status)
 
 ---
 
-## Phase 4: Product Catalog, Search & Inventory Management
+## 📁 Feature Slice 2: Media & File Storage Registry
 
-### 4.1 Backend Catalog Engine
-- [ ] **Micro-Task 4.1.1**: Category CRUD schemas, service, controller, and routes
-- [ ] **Micro-Task 4.1.2**: Product CRUD with multi-variant management & Prisma transactions
-- [ ] **Micro-Task 4.1.3**: Public paginated product catalog with dynamic filtering (price, brand, size, color)
-- [ ] **Micro-Task 4.1.4**: Product Redis caching middleware with automated cache bust on updates
+### 2.1 Micro-Slice: Single File Upload
+- [ ] **2.1.1 [Backend]**: Multer file parser + MIME validation + File Model Registry (`/api/v1/files/upload`)
+- [ ] **2.1.2 [Flutter Admin]**: File Upload Widget & Progress Indicator
+- [ ] **2.1.3 [Android Mobile]**: Avatar Picker & Upload integration
 
-### 4.2 Flutter Admin Product Management
-- [ ] **Micro-Task 4.2.1**: Product AsyncNotifier provider (`admin/lib/features/products/providers/`)
-- [ ] **Micro-Task 4.2.2**: Responsive Product Data Table with pagination, search, and stock badges (Web)
-- [ ] **Micro-Task 4.2.3**: Product List Card view (Mobile Admin)
-- [ ] **Micro-Task 4.2.4**: Add/Edit Product Modal Dialog with multi-image URL/picker support
-
-### 4.3 Android Mobile Product Experience
-- [ ] **Micro-Task 4.3.1**: Catalog Domain & Data layers (Room caching + Retrofit remote paging)
-- [ ] **Micro-Task 4.3.2**: Home Screen Composable (Banner Carousel, Category Pills, Featured Grid)
-- [ ] **Micro-Task 4.3.3**: Product Detail Screen Composable (Variant selectors, Image Pager, Sticky Add-to-Cart)
+### 2.2 Micro-Slice: Product Media Gallery
+- [ ] **2.2.1 [Backend]**: Multi-file upload endpoint & ProductImage relation linking
+- [ ] **2.2.2 [Flutter Admin]**: Drag-and-Drop Image Gallery & Primary Image Selector
+- [ ] **2.2.3 [Android Mobile]**: Coil Image Caching & Luxury Shimmer Placeholders
 
 ---
 
-## Phase 5: Cart, Wishlist & Checkout
+## 👗 Feature Slice 3: Categories & Product Catalog Management
 
-### 5.1 Backend Cart & Order Engine
-- [ ] **Micro-Task 5.1.1**: Cart & Wishlist API with atomic stock check
-- [ ] **Micro-Task 5.1.2**: Order Creation with Prisma interactive `$transaction` (decrement stock + generate invoice)
-- [ ] **Micro-Task 5.1.3**: Payment integration / Webhook receiver
+### 3.1 Micro-Slice: Hierarchical Categories
+- [ ] **3.1.1 [Backend]**: Category CRUD API (Parent/Child relations, Slug auto-generation, Redis cache)
+- [ ] **3.1.2 [Flutter Admin]**: Category Tree View & Category Create/Edit Modal
+- [ ] **3.1.3 [Android Mobile]**: Category Filter Chips & Category Navigation Sheet
 
-### 5.2 Android Mobile Cart & Orders
-- [ ] **Micro-Task 5.2.1**: Cart Screen with quantity steppers & animated swipe-to-delete
-- [ ] **Micro-Task 5.2.2**: Checkout Screen with Address selector and Payment confirmation
-- [ ] **Micro-Task 5.2.3**: Order History & Live Tracking Screen with timeline
+### 3.2 Micro-Slice: Product CRUD & Multi-SKU Variants
+- [ ] **3.2.1 [Backend]**: Product & SKU Variant API (Color, Size, SKU, Stock, Price Adjustment) with Prisma interactive transaction
+- [ ] **3.2.2 [Flutter Admin]**: Product Data Table with Stock Badges + Add/Edit Multi-Step Modal
+- [ ] **3.2.3 [Android Mobile]**: Product Discovery Screen (Hero Carousel, Curated Grids, Offline Room Cache)
 
-### 5.3 Flutter Admin Order Dispatch
-- [ ] **Micro-Task 5.3.1**: Orders Kanban & Data Table with status transition dropdowns
-- [ ] **Micro-Task 5.3.2**: Order Detail Sheet with customer info, line items, and invoice generation
+### 3.3 Micro-Slice: Product Detail & SKU Variant Selector
+- [ ] **3.3.1 [Backend]**: Product by Slug API with full Variant matrix & Image gallery
+- [ ] **3.3.2 [Android Mobile]**: Luxury Product Detail Composable (Image Pager, Size Pills, Color Dots, Dynamic Stock Pill)
 
----
-
-## Phase 6: Real-Time Features & Analytics
-
-- [ ] **Micro-Task 6.1**: Socket.io Server Gateway setup with authenticated rooms
-- [ ] **Micro-Task 6.2**: Admin Real-Time Metrics & Live Order Feed
-- [ ] **Micro-Task 6.3**: Flutter Admin Analytics Charts with `fl_chart` (Revenue curves, Top categories)
-- [ ] **Micro-Task 6.4**: Android Live Order Status Listener via Socket.io client
+### 3.4 Micro-Slice: Catalog Search, Filter & Pagination
+- [ ] **3.4.1 [Backend]**: Full-text Search & Dynamic Filtering API (Price range, Category, Size, Color, Sort)
+- [ ] **3.4.2 [Flutter Admin]**: Data Table Live Search & Filter Bar
+- [ ] **3.4.3 [Android Mobile]**: Filter BottomSheet (Price Range Slider, Color Selector)
 
 ---
 
-## Phase 7: Testing, CI/CD & Production Polish
+## 🛍️ Feature Slice 4: Wishlist & Shopping Cart
 
-- [ ] **Micro-Task 7.1**: Backend Unit & Integration Tests (Supertest + Vitest)
-- [ ] **Micro-Task 7.2**: Android Unit Tests (Turbine + MockK) & Compose UI Tests
-- [ ] **Micro-Task 7.3**: Flutter Widget Tests & Provider Tests
-- [ ] **Micro-Task 7.4**: Production Dockerfile multi-stage builds & GitHub Actions workflow
-- [ ] **Micro-Task 7.5**: Portfolio Documentation with architecture diagrams & live demo walkthroughs
+### 4.1 Micro-Slice: Wishlist Experience
+- [ ] **4.1.1 [Backend]**: Wishlist Toggle API (Add, Remove, List with user relation)
+- [ ] **4.1.2 [Android Mobile]**: Wishlist Screen with Staggered Grid & Quick Move-to-Cart
+
+### 4.2 Micro-Slice: Shopping Cart & Quantity Controls
+- [ ] **4.2.1 [Backend]**: Cart API (Add Variant, Quantity Steppers, Atomic Stock Check, Subtotal Calculation)
+- [ ] **4.2.2 [Android Mobile]**: Luxury Shopping Cart Screen (Swipe-to-Delete, Quantity Controls, Promo Code, Subtotal Breakdown)
+- [ ] **4.2.3 [Flutter Admin]**: Abandoned Cart & Stock Reservation Metrics
 
 ---
 
-## 📌 Current Status Summary
-- **Current Milestone**: `Phase 1.4 — Android Mobile Foundation`
-- **Next Micro-Task**: `Micro-Task 1.4.2 — mobile/app/build.gradle.kts configuration`
+## 📦 Feature Slice 5: Orders, Checkout & Payments
+
+### 5.1 Micro-Slice: Address Management
+- [ ] **5.1.1 [Backend]**: Address CRUD API (Add, Edit, Delete, Set Default)
+- [ ] **5.1.2 [Android Mobile]**: Address Selection & Add Address Bottom Sheet
+
+### 5.2 Micro-Slice: Order Placement & Atomic Stock Decrement
+- [ ] **5.2.1 [Backend]**: Checkout API with Prisma interactive `$transaction` (Snapshot generation, stock deduction, order number generator)
+- [ ] **5.2.2 [Android Mobile]**: Multi-Step Checkout Flow (Address ➔ Payment Method ➔ Order Review ➔ Success Celebration)
+
+### 5.3 Micro-Slice: Order State Machine & Fulfillment
+- [ ] **5.3.1 [Backend]**: Order State Transition API (`PENDING` ➔ `PAID` ➔ `PROCESSING` ➔ `SHIPPED` ➔ `DELIVERED` ➔ `CANCELLED`)
+- [ ] **5.3.2 [Flutter Admin]**: Orders Kanban Board, Interactive Data Table & PDF Invoice Generator
+- [ ] **5.3.3 [Android Mobile]**: Order History & Live Delivery Timeline Tracking Screen
+
+---
+
+## ⭐ Feature Slice 6: Product Reviews & Ratings
+
+### 6.1 Micro-Slice: Customer Reviews
+- [ ] **6.1.1 [Backend]**: Review API (1-5 Stars, Comment, Verified Buyer enforcement, Rating average aggregation)
+- [ ] **6.1.2 [Android Mobile]**: Review Breakdown (Rating Histogram + Write Review Modal)
+- [ ] **6.1.3 [Flutter Admin]**: Review Moderation Data Table (Approve/Flag/Delete)
+
+---
+
+## ⚡ Feature Slice 7: Real-Time Engine & Live Admin Analytics
+
+### 7.1 Micro-Slice: Live Order Feed & Alerts
+- [ ] **7.1.1 [Backend]**: Socket.io Server Gateway with Authenticated Rooms (`admin_room`, `user_{id}`)
+- [ ] **7.1.2 [Flutter Admin]**: Real-time Order Toast Notifications & Live Feed
+- [ ] **7.1.3 [Android Mobile]**: Real-time Order Status Push Listener
+
+### 7.2 Micro-Slice: Executive Analytics Dashboard
+- [ ] **7.2.1 [Backend]**: Analytics Aggregator API (Revenue, Sales Trends, Top SKUs, Low Stock alerts)
+- [ ] **7.2.2 [Flutter Admin]**: Luxury FlChart Dashboard (Revenue curves, Order volume, Inventory health)
+
+---
+
+## 🚢 Phase 8: Testing, CI/CD & Production Polish
+
+- [ ] **8.1**: Backend Integration Test Suite (Supertest + Vitest)
+- [ ] **8.2**: Flutter Widget & Riverpod Provider Tests
+- [ ] **8.3**: Android Unit & Compose UI Tests
+- [ ] **8.4**: Production Multi-Stage Dockerfile & GitHub Actions Workflow
+- [ ] **8.5**: Complete Portfolio & Architecture Showcase Documentation
+
+---
+
+## 📌 Status Summary
+- **Current Milestone**: `Feature Slice 1: Authentication & User Accounts`
+- **Immediate Next Step**: `Micro-Slice 1.1.1 [Backend] — Password Utility & Registration Schema`
