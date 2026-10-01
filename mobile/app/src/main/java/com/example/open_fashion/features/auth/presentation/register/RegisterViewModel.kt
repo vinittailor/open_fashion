@@ -1,5 +1,6 @@
 package com.example.open_fashion.features.auth.presentation.register
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.open_fashion.core.network.NetworkResult
@@ -10,6 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val TAG = "OpenFashionRegisterVM"
 
 /**
  * MVI ViewModel managing the Customer Registration screen state and business flows.
@@ -103,6 +106,8 @@ class RegisterViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, generalError = null) }
 
+            Log.d(TAG, "Attempting registration for email: ${currentState.email.trim().lowercase()}")
+
             val result = authRepository.register(
                 name = currentState.name.trim(),
                 email = currentState.email.trim().lowercase(),
@@ -112,15 +117,18 @@ class RegisterViewModel(
 
             when (result) {
                 is NetworkResult.Success -> {
+                    val user = result.data
+                    Log.i(TAG, "Registration successful: ${user?.email} (ID: ${user?.id})")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            registeredUser = result.data,
+                            registeredUser = user,
                             generalError = null
                         )
                     }
                 }
                 is NetworkResult.Error -> {
+                    Log.e(TAG, "Registration failed: ${result.message} [Code: ${result.code}]")
                     _uiState.update {
                         it.copy(
                             isLoading = false,

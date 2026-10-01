@@ -1,5 +1,6 @@
 package com.example.open_fashion.core.network
 
+import com.example.open_fashion.core.storage.TokenManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -12,12 +13,17 @@ import java.util.concurrent.TimeUnit
  * Central Retrofit & OkHttp networking factory for Open Fashion Android client.
  */
 object ApiClient {
+    // 127.0.0.1 with `adb reverse tcp:5000 tcp:5000` enables seamless connection on emulators & physical devices
+    private const val BASE_URL = "http://127.0.0.1:5000/api/v1/"
+
+    private var tokenManager: TokenManager? = null
+
     /**
-     * Base URL for local development:
-     * - 10.0.2.2 is the special Android Emulator IP mapping to the host PC localhost.
-     * - For physical device testing over Wi-Fi, change this to your PC's LAN IP (e.g. 192.168.1.X:5000).
+     * Optional initialization method to supply TokenManager for JWT bearer injection.
      */
-    private const val BASE_URL = "http://10.0.2.2:5000/api/v1/"
+    fun init(tokenManager: TokenManager) {
+        this.tokenManager = tokenManager
+    }
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -25,31 +31,38 @@ object ApiClient {
         isLenient = true
     }
 
-    private val okHttpClient: OkHttpClient by lazy {
-        val logging = HttpLoggingInterceptor().apply {
+    private val loggingInterceptor: HttpLoggingInterceptor by lazy {
+        HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
+    }
 
-        OkHttpClient.Builder()
+    fun getOkHttpClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(logging)
-            .build()
+            .addInterceptor(loggingInterceptor)
+
+        tokenManager?.let { tm ->
+            builder.addInterceptor(AuthInterceptor(tm))
+        }
+
+        return builder.build()
     }
 
-    val retrofit: Retrofit by lazy {
-        val contentType = "application/json".toMediaType()
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-    }
+    val retrofit: Retrofit
+        get() {
+            val contentType = "application/json".toMediaType()
+            return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(getOkHttpClient())
+                .addConverterFactory(json.asConverterFactory(contentType))
+                .build()
+        }
 
     /**
      * Inline reified helper to instantiate Retrofit API service interfaces.
-     * Example: val authApi = ApiClient.create<AuthApiService>()
      */
     inline fun <reified T> create(): T = retrofit.create(T::class.java)
 }

@@ -1,5 +1,6 @@
 package com.example.open_fashion.features.auth.data.repository
 
+import android.util.Log
 import com.example.open_fashion.core.network.ApiClient
 import com.example.open_fashion.core.network.NetworkResult
 import com.example.open_fashion.features.auth.data.remote.AuthApiService
@@ -16,6 +17,8 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Response
 import java.io.IOException
+
+private const val TAG = "OpenFashionAuthRepo"
 
 /**
  * Concrete implementation of [AuthRepository] managing remote API interactions.
@@ -52,11 +55,13 @@ class AuthRepositoryImpl(
                 parseErrorResponse(response, "Registration failed.")
             }
         } catch (e: IOException) {
+            Log.e(TAG, "Registration Network I/O Error: ${e.message}", e)
             NetworkResult.Error(
                 message = "Unable to connect to server. Please check your internet or emulator connection.",
                 throwable = e
             )
         } catch (e: Exception) {
+            Log.e(TAG, "Registration Unexpected Error: ${e.message}", e)
             NetworkResult.Error(
                 message = e.localizedMessage ?: "An unexpected error occurred during registration.",
                 throwable = e
@@ -88,11 +93,13 @@ class AuthRepositoryImpl(
                 parseErrorResponse(response, "Invalid email or password.")
             }
         } catch (e: IOException) {
+            Log.e(TAG, "Login Network I/O Error: ${e.message}", e)
             NetworkResult.Error(
                 message = "Unable to connect to server. Please check your connection.",
                 throwable = e
             )
         } catch (e: Exception) {
+            Log.e(TAG, "Login Unexpected Error: ${e.message}", e)
             NetworkResult.Error(
                 message = e.localizedMessage ?: "An unexpected error occurred during login.",
                 throwable = e
@@ -118,11 +125,13 @@ class AuthRepositoryImpl(
                 parseErrorResponse(response, "Session expired. Please sign in again.")
             }
         } catch (e: IOException) {
+            Log.e(TAG, "Token Refresh Network I/O Error: ${e.message}", e)
             NetworkResult.Error(
                 message = "Network connection failed during token refresh.",
                 throwable = e
             )
         } catch (e: Exception) {
+            Log.e(TAG, "Token Refresh Unexpected Error: ${e.message}", e)
             NetworkResult.Error(
                 message = e.localizedMessage ?: "Token refresh failed.",
                 throwable = e
@@ -135,6 +144,7 @@ class AuthRepositoryImpl(
             authApiService.logout()
             NetworkResult.Success(Unit)
         } catch (e: Exception) {
+            Log.w(TAG, "Logout API error (ignored for local cleanup): ${e.message}")
             // Best-effort logout: treat as success for local clearing
             NetworkResult.Success(Unit)
         }
@@ -154,8 +164,11 @@ class AuthRepositoryImpl(
                 "Server returned HTTP ${response.code()}"
             }
         } catch (e: Exception) {
+            Log.w(TAG, "Failed to parse error body: $errorJsonStr", e)
             defaultMessage
         }
+
+        Log.e(TAG, "HTTP ${response.code()} Error: $parsedErrorMessage (Raw: $errorJsonStr)")
 
         return NetworkResult.Error(
             code = response.code().toString(),

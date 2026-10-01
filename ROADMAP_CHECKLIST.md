@@ -37,17 +37,17 @@
 - [x] **1.1.2 [Flutter Admin]**: Admin User Registration / Invitation Form
 - [x] **1.1.3 [Android Mobile]**: Customer Luxury Registration Screen (Compose M3 + MVI ViewModel)
 
-### 1.2 Micro-Slice: User Login & JWT Session Management ➔ 📍 STARTING HERE
+### 1.2 Micro-Slice: User Login & JWT Session Management ➔ [COMPLETED]
 - [x] **1.2.1 [Backend]**: JWT Signer/Verifier utility + Redis Refresh Token Whitelist + POST `/api/v1/auth/login` & POST `/api/v1/auth/refresh`
 - [x] **1.2.2 [Flutter Admin]**: Responsive Admin Login Screen (Web & Mobile Layouts) + Riverpod AuthState + Secure Storage
 - [x] **1.2.3 [Android Mobile]**: Customer Login Screen (Compose M3) + Encrypted Token DataStore + Auto-Login Flow
 
-### 1.3 Micro-Slice: Protected Routes & User Profile (`/me`)
-- [ ] **1.3.1 [Backend]**: JWT Auth Guard Middleware + Role-Based Access Guard (`ADMIN`/`CUSTOMER`) + GET & PATCH `/api/v1/users/me`
-- [ ] **1.3.2 [Flutter Admin]**: Admin Header Profile Chip, Role Badge & Logout Action
-- [ ] **1.3.3 [Android Mobile]**: Customer Profile Screen (Account info, Edit Profile, Logout bottom sheet)
+### 1.3 Micro-Slice: Protected Routes & User Profile (`/me`) ➔ [COMPLETED]
+- [x] **1.3.1 [Backend]**: JWT Auth Guard Middleware + Role-Based Access Guard (`ADMIN`/`CUSTOMER`) + GET & PATCH `/api/v1/users/me`
+- [x] **1.3.2 [Flutter Admin]**: Admin Header Profile Chip, Role Badge & Logout Action
+- [x] **1.3.3 [Android Mobile]**: Customer Profile Screen (Account info, Edit Profile, Logout bottom sheet)
 
-### 1.4 Micro-Slice: Password Reset & Email Verification
+### 1.4 Micro-Slice: Password Reset & Email Verification ➔ 📍 STARTING HERE
 - [ ] **1.4.1 [Backend]**: SHA-256 Token Generator + Forgot Password + Reset Password + Verify Email endpoints
 - [ ] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation
 - [ ] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen
@@ -159,4 +159,4 @@
 
 ## 📌 Status Summary
 - **Current Milestone**: `Feature Slice 1: Authentication & User Accounts`
-- **Immediate Next Step**: `Micro-Slice 1.1.1 [Backend] — Password Utility & Registration Schema`
+- **Immediate Next Step**: `Micro-Slice 1.4.1 [Backend] — Password Reset & Email Verification Endpoints`

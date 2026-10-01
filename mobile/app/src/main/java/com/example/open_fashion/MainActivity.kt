@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material3.*
@@ -23,9 +24,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.open_fashion.core.navigation.NavRoute
+import com.example.open_fashion.core.network.ApiClient
 import com.example.open_fashion.core.storage.TokenManager
 import com.example.open_fashion.features.auth.presentation.login.LoginScreen
 import com.example.open_fashion.features.auth.presentation.register.RegisterScreen
+import com.example.open_fashion.features.profile.presentation.ProfileScreen
 import com.example.open_fashion.ui.theme.*
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +38,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             Open_fashionTheme {
                 val context = LocalContext.current
-                val tokenManager = remember { TokenManager(context) }
+                val tokenManager = remember {
+                    TokenManager(context).also { ApiClient.init(it) }
+                }
                 val navController = rememberNavController()
 
                 val startDestination = if (tokenManager.isLoggedIn()) {
@@ -76,12 +81,30 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // 3. Customer Home / Authenticated Placeholder
+                    // 3. Customer Home Screen
                     composable(NavRoute.Home.route) {
                         val user = tokenManager.getUser()
                         CustomerHomeScreen(
                             userName = user?.name ?: "Customer",
                             userEmail = user?.email ?: "",
+                            onNavigateToProfile = {
+                                navController.navigate(NavRoute.Profile.route)
+                            },
+                            onLogout = {
+                                tokenManager.clearSession()
+                                navController.navigate(NavRoute.Login.route) {
+                                    popUpTo(NavRoute.Home.route) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    // 4. Customer Profile Screen
+                    composable(NavRoute.Profile.route) {
+                        ProfileScreen(
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            },
                             onLogout = {
                                 tokenManager.clearSession()
                                 navController.navigate(NavRoute.Login.route) {
@@ -104,6 +127,7 @@ class MainActivity : ComponentActivity() {
 fun CustomerHomeScreen(
     userName: String,
     userEmail: String,
+    onNavigateToProfile: () -> Unit,
     onLogout: () -> Unit
 ) {
     Scaffold(
@@ -119,11 +143,18 @@ fun CustomerHomeScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = onNavigateToProfile) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountCircle,
+                            contentDescription = "My Profile",
+                            tint = AccentGold
+                        )
+                    }
                     IconButton(onClick = onLogout) {
                         Icon(
                             imageVector = Icons.Outlined.Logout,
                             contentDescription = "Sign Out",
-                            tint = AccentGold
+                            tint = StatusError
                         )
                     }
                 },
@@ -187,14 +218,30 @@ fun CustomerHomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "JWT Access & Refresh tokens securely cached in TokenManager. Automatic session recovery is active.",
+                        text = "JWT Access & Refresh tokens securely cached. Protected API calls will now automatically carry Bearer tokens.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondaryLight
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onNavigateToProfile,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AccentGold,
+                    contentColor = PrimaryCharcoal
+                ),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) {
+                Icon(Icons.Outlined.AccountCircle, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("VIEW & EDIT PROFILE", fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedButton(
                 onClick = onLogout,
@@ -202,7 +249,7 @@ fun CustomerHomeScreen(
                     contentColor = StatusError
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().height(48.dp)
             ) {
                 Text("SIGN OUT")
             }

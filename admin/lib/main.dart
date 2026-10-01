@@ -7,6 +7,7 @@ import 'core/constants/breakpoints.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/register_screen.dart';
+import 'features/profile/presentation/widgets/profile_modal.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,47 +81,51 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
         actions: [
           // Authenticated User Profile & Role Chip
           if (user != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    radius: 12,
-                    backgroundColor: AppColors.accent,
-                    child: Text(
-                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'A',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => showAdminProfileModal(context, user),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      radius: 12,
+                      backgroundColor: AppColors.accent,
+                      child: Text(
+                        user.name.isNotEmpty ? user.name[0].toUpperCase() : 'A',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(user.name, style: AppTypography.labelMedium(isDark)),
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      user.role,
-                      style: const TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                    const SizedBox(width: 8),
+                    Text(user.name, style: AppTypography.labelMedium(isDark)),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        user.role,
+                        style: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: 8),

@@ -1,5 +1,6 @@
 package com.example.open_fashion.features.auth.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.open_fashion.core.network.NetworkResult
@@ -11,6 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val TAG = "OpenFashionLoginVM"
 
 /**
  * MVI ViewModel managing the Customer Login screen state and business flows.
@@ -83,6 +86,8 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, generalError = null) }
 
+            Log.d(TAG, "Attempting login for email: ${currentState.email.trim().lowercase()}")
+
             val result = authRepository.login(
                 email = currentState.email.trim().lowercase(),
                 password = currentState.password
@@ -91,6 +96,7 @@ class LoginViewModel(
             when (result) {
                 is NetworkResult.Success -> {
                     val session = result.data
+                    Log.i(TAG, "Login successful for user: ${session?.user?.email} (Role: ${session?.user?.role})")
                     if (session != null) {
                         tokenManager?.saveSession(session)
                     }
@@ -103,6 +109,7 @@ class LoginViewModel(
                     }
                 }
                 is NetworkResult.Error -> {
+                    Log.e(TAG, "Login failed: ${result.message} [Code: ${result.code}]")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
