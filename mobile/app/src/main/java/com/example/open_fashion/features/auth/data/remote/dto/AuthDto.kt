@@ -15,6 +15,23 @@ data class RegisterRequestDto(
 )
 
 /**
+ * Login HTTP Request Payload sent to POST /api/v1/auth/login.
+ */
+@Serializable
+data class LoginRequestDto(
+    @SerialName("email") val email: String,
+    @SerialName("password") val password: String
+)
+
+/**
+ * Refresh Token HTTP Request Payload sent to POST /api/v1/auth/refresh.
+ */
+@Serializable
+data class RefreshTokenRequestDto(
+    @SerialName("refreshToken") val refreshToken: String
+)
+
+/**
  * Serialized representation of a User record received from the backend.
  */
 @Serializable
@@ -38,7 +55,20 @@ data class AuthDataDto(
 )
 
 /**
- * Root ApiResponse Envelope matching backend ApiResponse utility.
+ * Nested container for login and token refresh response data.
+ */
+@Serializable
+data class LoginDataDto(
+    @SerialName("user") val user: UserDto,
+    @SerialName("accessToken") val accessToken: String,
+    @SerialName("refreshToken") val refreshToken: String,
+    @SerialName("tokenType") val tokenType: String = "Bearer",
+    @SerialName("expiresIn") val expiresIn: Int = 900,
+    @SerialName("refreshExpiresIn") val refreshExpiresIn: Int = 604800
+)
+
+/**
+ * Root ApiResponse Envelope for user registration.
  */
 @Serializable
 data class AuthResponseDto(
@@ -46,4 +76,15 @@ data class AuthResponseDto(
     @SerialName("statusCode") val statusCode: Int? = null,
     @SerialName("message") val message: String? = null,
     @SerialName("data") val data: AuthDataDto? = null
+)
+
+/**
+ * Root ApiResponse Envelope for user login and token rotation.
+ */
+@Serializable
+data class LoginResponseDto(
+    @SerialName("success") val success: Boolean,
+    @SerialName("statusCode") val statusCode: Int? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("data") val data: LoginDataDto? = null
 )

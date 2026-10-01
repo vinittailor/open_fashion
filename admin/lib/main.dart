@@ -4,6 +4,8 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_typography.dart';
 import 'core/constants/breakpoints.dart';
+import 'features/auth/presentation/controllers/auth_controller.dart';
+import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/register_screen.dart';
 
 void main() {
@@ -22,6 +24,7 @@ class OpenFashionAdminApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final authState = ref.watch(authControllerProvider);
 
     return MaterialApp(
       title: 'Open Fashion Admin',
@@ -29,8 +32,24 @@ class OpenFashionAdminApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      home: const AdminShellScreen(),
+      home: _buildHome(authState),
     );
+  }
+
+  Widget _buildHome(AuthState authState) {
+    if (authState.status == AuthStatus.initial) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.accent),
+        ),
+      );
+    }
+
+    if (authState.isAuthenticated) {
+      return const AdminShellScreen();
+    }
+
+    return const LoginScreen();
   }
 }
 
@@ -49,6 +68,8 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final authState = ref.watch(authControllerProvider);
+    final user = authState.user;
 
     return Scaffold(
       appBar: AppBar(
@@ -57,6 +78,54 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
           style: AppTypography.titleLarge(isDark),
         ),
         actions: [
+          // Authenticated User Profile & Role Chip
+          if (user != null) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: AppColors.accent,
+                    child: Text(
+                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'A',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(user.name, style: AppTypography.labelMedium(isDark)),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.accent,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      user.role,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+
           // Quick Action to open Register / Invite User
           TextButton.icon(
             style: TextButton.styleFrom(foregroundColor: AppColors.accent),
@@ -69,11 +138,20 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
             },
           ),
           const SizedBox(width: 8),
+
           // Theme Mode Toggle Button
           IconButton(
             icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
             tooltip: 'Toggle Theme Mode',
             onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(),
+          ),
+          const SizedBox(width: 4),
+
+          // Logout Action Button
+          IconButton(
+            icon: const Icon(Icons.logout_outlined, size: 20),
+            tooltip: 'Sign Out',
+            onPressed: () => ref.read(authControllerProvider.notifier).logout(),
           ),
           const SizedBox(width: 8),
         ],

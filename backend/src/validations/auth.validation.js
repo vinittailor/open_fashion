@@ -47,3 +47,33 @@ export const registerValidation = z.object({
       .optional(),
   }),
 });
+
+/**
+ * Login request validation schema.
+ * Validates and sanitizes the `req.body` payload for POST /api/v1/auth/login.
+ */
+export const loginValidation = z.object({
+  body: z.object({
+    email: z
+      .string({ error: 'Email address is required' })
+      .trim()
+      .toLowerCase()
+      .pipe(z.email({ error: 'Please provide a valid email address' })),
+
+    password: z
+      .string({ error: 'Password is required' })
+      .min(1, { error: 'Password cannot be empty' }),
+  }),
+});
+
+/**
+ * Refresh Token request validation schema.
+ * Validates the `req.body` payload for POST /api/v1/auth/refresh.
+ */
+export const refreshTokenValidation = z.object({
+  body: z.object({
+    refreshToken: z
+      .string({ error: 'Refresh token is required' })
+      .min(1, { error: 'Refresh token cannot be empty' }),
+  }),
+});

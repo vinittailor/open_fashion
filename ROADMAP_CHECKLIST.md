@@ -38,9 +38,9 @@
 - [x] **1.1.3 [Android Mobile]**: Customer Luxury Registration Screen (Compose M3 + MVI ViewModel)
 
 ### 1.2 Micro-Slice: User Login & JWT Session Management ➔ 📍 STARTING HERE
-- [ ] **1.2.1 [Backend]**: JWT Signer/Verifier utility + Redis Refresh Token Whitelist + POST `/api/v1/auth/login` & POST `/api/v1/auth/refresh`
-- [ ] **1.2.2 [Flutter Admin]**: Responsive Admin Login Screen (Web & Mobile Layouts) + Riverpod AuthState + Secure Storage
-- [ ] **1.2.3 [Android Mobile]**: Customer Login Screen (Compose M3) + Encrypted Token DataStore + Auto-Login Flow
+- [x] **1.2.1 [Backend]**: JWT Signer/Verifier utility + Redis Refresh Token Whitelist + POST `/api/v1/auth/login` & POST `/api/v1/auth/refresh`
+- [x] **1.2.2 [Flutter Admin]**: Responsive Admin Login Screen (Web & Mobile Layouts) + Riverpod AuthState + Secure Storage
+- [x] **1.2.3 [Android Mobile]**: Customer Login Screen (Compose M3) + Encrypted Token DataStore + Auto-Login Flow
 
 ### 1.3 Micro-Slice: Protected Routes & User Profile (`/me`)
 - [ ] **1.3.1 [Backend]**: JWT Auth Guard Middleware + Role-Based Access Guard (`ADMIN`/`CUSTOMER`) + GET & PATCH `/api/v1/users/me`
