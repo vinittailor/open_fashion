@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../domain/models/auth_response_model.dart';
 import '../domain/models/user_model.dart';
@@ -26,7 +27,7 @@ class AuthRepository {
   }) async {
     try {
       final response = await _dio.post(
-        '/auth/register',
+        ApiEndpoints.register,
         data: {
           'name': name,
           'email': email,
@@ -53,7 +54,7 @@ class AuthRepository {
   }) async {
     try {
       final response = await _dio.post(
-        '/auth/login',
+        ApiEndpoints.login,
         data: {
           'email': email,
           'password': password,
@@ -75,7 +76,7 @@ class AuthRepository {
   }) async {
     try {
       final response = await _dio.post(
-        '/auth/refresh',
+        ApiEndpoints.refresh,
         data: {
           'refreshToken': refreshToken,
         },
@@ -94,7 +95,7 @@ class AuthRepository {
   Future<AuthActionModel> forgotPassword(String email) async {
     try {
       final response = await _dio.post(
-        '/auth/forgot-password',
+        ApiEndpoints.forgotPassword,
         data: {'email': email.trim()},
       );
 
@@ -113,7 +114,7 @@ class AuthRepository {
   }) async {
     try {
       final response = await _dio.post(
-        '/auth/reset-password',
+        ApiEndpoints.resetPassword,
         data: {
           'token': token.trim(),
           'newPassword': newPassword,
@@ -131,7 +132,7 @@ class AuthRepository {
   /// Sends email verification token & OTP via POST /auth/send-verification
   Future<AuthActionModel> sendEmailVerification() async {
     try {
-      final response = await _dio.post('/auth/send-verification');
+      final response = await _dio.post(ApiEndpoints.sendVerification);
       final responseData = response.data as Map<String, dynamic>;
       return AuthActionModel.fromJson(responseData);
     } on DioException catch (e) {
@@ -146,7 +147,7 @@ class AuthRepository {
   }) async {
     try {
       final response = await _dio.post(
-        '/auth/verify-email',
+        ApiEndpoints.verifyEmail,
         data: {
           'token': token.trim(),
           if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
@@ -167,7 +168,7 @@ class AuthRepository {
   Future<void> logout({String? userId}) async {
     try {
       await _dio.post(
-        '/auth/logout',
+        ApiEndpoints.logout,
         data: {
           if (userId != null) 'userId': userId,
         },

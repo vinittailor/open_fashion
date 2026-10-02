@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/breakpoints.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -202,13 +203,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
 
                         Text(
-                          'Welcome Back',
+                          AppStrings.welcomeBack,
                           style: AppTypography.displayMedium(isDark),
                           textAlign: isDesktop ? TextAlign.start : TextAlign.center,
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Enter your executive credentials to access the console',
+                          AppStrings.loginSubtitle,
                           style: AppTypography.bodySmall(isDark),
                           textAlign: isDesktop ? TextAlign.start : TextAlign.center,
                         ),
@@ -240,18 +241,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ],
 
                         // Email Field
-                        Text('Email Address', style: AppTypography.labelMedium(isDark)),
+                        Text(AppStrings.emailAddress, style: AppTypography.labelMedium(isDark)),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
-                            hintText: 'admin@openfashion.com',
+                            hintText: AppStrings.emailHint,
                             prefixIcon: Icon(Icons.alternate_email, size: 20),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Email address is required';
+                              return AppStrings.emailRequired;
                             }
                             return null;
                           },
@@ -262,7 +263,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Password', style: AppTypography.labelMedium(isDark)),
+                            Text(AppStrings.password, style: AppTypography.labelMedium(isDark)),
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).push(
@@ -277,7 +278,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               child: Text(
-                                'Forgot Password?',
+                                AppStrings.forgotPassword,
                                 style: AppTypography.bodySmall(isDark).copyWith(
                                   color: AppColors.accent,
                                   fontWeight: FontWeight.w600,
@@ -291,7 +292,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           controller: _passwordController,
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
-                            hintText: '••••••••••••',
+                            hintText: AppStrings.passwordHint,
                             prefixIcon: const Icon(Icons.lock_outline, size: 20),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -303,7 +304,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Password is required';
+                              return AppStrings.passwordRequired;
                             }
                             return null;
                           },
@@ -330,7 +331,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                                   )
                                 : Text(
-                                    'SIGN IN TO CONSOLE',
+                                    AppStrings.signInToConsole,
                                     style: AppTypography.labelLarge(false).copyWith(
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.2,

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../auth/domain/models/user_model.dart';
 
@@ -18,7 +19,7 @@ class UserRepository {
   /// Fetches the authenticated user profile via GET /users/me
   Future<UserModel> getMe() async {
     try {
-      final response = await _dio.get('/users/me');
+      final response = await _dio.get(ApiEndpoints.userMe);
       final responseData = response.data as Map<String, dynamic>;
       final data = responseData['data'] as Map<String, dynamic>;
       final userJson = data['user'] as Map<String, dynamic>;
@@ -36,7 +37,7 @@ class UserRepository {
   }) async {
     try {
       final response = await _dio.patch(
-        '/users/me',
+        ApiEndpoints.userMe,
         data: {
           if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
           if (phoneNumber != null) 'phoneNumber': phoneNumber.trim(),
