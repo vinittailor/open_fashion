@@ -1,5 +1,6 @@
 package com.example.open_fashion.core.network
 
+import com.example.open_fashion.core.constants.ApiEndpoints
 import com.example.open_fashion.core.storage.TokenManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -13,8 +14,7 @@ import java.util.concurrent.TimeUnit
  * Central Retrofit & OkHttp networking factory for Open Fashion Android client.
  */
 object ApiClient {
-    // 127.0.0.1 with `adb reverse tcp:5000 tcp:5000` enables seamless connection on emulators & physical devices
-    private const val BASE_URL = "http://127.0.0.1:5000/api/v1/"
+    private const val BASE_URL = ApiEndpoints.BASE_URL
 
     private var tokenManager: TokenManager? = null
 

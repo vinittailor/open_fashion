@@ -1,5 +1,6 @@
 package com.example.open_fashion.features.profile.data.remote
 
+import com.example.open_fashion.core.constants.ApiEndpoints
 import com.example.open_fashion.features.profile.data.remote.dto.ProfileResponseDto
 import com.example.open_fashion.features.profile.data.remote.dto.UpdateProfileRequestDto
 import retrofit2.Response
@@ -16,14 +17,14 @@ interface UserApiService {
      * Retrieves the authenticated user's profile.
      * Endpoint: GET /api/v1/users/me
      */
-    @GET("users/me")
+    @GET(ApiEndpoints.USERS_ME)
     suspend fun getMe(): Response<ProfileResponseDto>
 
     /**
      * Updates the authenticated user's profile information.
      * Endpoint: PATCH /api/v1/users/me
      */
-    @PATCH("users/me")
+    @PATCH(ApiEndpoints.USERS_ME)
     suspend fun updateMe(
         @Body request: UpdateProfileRequestDto
     ): Response<ProfileResponseDto>

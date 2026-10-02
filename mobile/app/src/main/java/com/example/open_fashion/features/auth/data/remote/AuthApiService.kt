@@ -1,5 +1,6 @@
 package com.example.open_fashion.features.auth.data.remote
 
+import com.example.open_fashion.core.constants.ApiEndpoints
 import com.example.open_fashion.features.auth.data.remote.dto.AuthResponseDto
 import com.example.open_fashion.features.auth.data.remote.dto.LoginRequestDto
 import com.example.open_fashion.features.auth.data.remote.dto.LoginResponseDto
@@ -18,7 +19,7 @@ interface AuthApiService {
      * Sends customer registration payload to backend.
      * Endpoint: POST /api/v1/auth/register
      */
-    @POST("auth/register")
+    @POST(ApiEndpoints.REGISTER)
     suspend fun register(
         @Body request: RegisterRequestDto
     ): Response<AuthResponseDto>
@@ -27,7 +28,7 @@ interface AuthApiService {
      * Sends customer login credentials to backend.
      * Endpoint: POST /api/v1/auth/login
      */
-    @POST("auth/login")
+    @POST(ApiEndpoints.LOGIN)
     suspend fun login(
         @Body request: LoginRequestDto
     ): Response<LoginResponseDto>
@@ -36,7 +37,7 @@ interface AuthApiService {
      * Sends refresh token to rotate session and receive new access/refresh tokens.
      * Endpoint: POST /api/v1/auth/refresh
      */
-    @POST("auth/refresh")
+    @POST(ApiEndpoints.REFRESH)
     suspend fun refreshToken(
         @Body request: RefreshTokenRequestDto
     ): Response<LoginResponseDto>
@@ -45,7 +46,7 @@ interface AuthApiService {
      * Informs the backend to revoke the active session in Redis.
      * Endpoint: POST /api/v1/auth/logout
      */
-    @POST("auth/logout")
+    @POST(ApiEndpoints.LOGOUT)
     suspend fun logout(
         @Body body: Map<String, String>? = null
     ): Response<Unit>
