@@ -49,7 +49,7 @@
 
 ### 1.4 Micro-Slice: Password Reset & Email Verification ➔ 📍 IN PROGRESS
 - [x] **1.4.1 [Backend]**: SHA-256 Token Generator + Forgot Password + Reset Password + Verify Email endpoints
-- [ ] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation
+- [x] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation
 - [ ] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen
 
 ### 1.5 Micro-Slice: Admin User Management

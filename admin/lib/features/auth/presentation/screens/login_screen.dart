@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 
 /// Luxury, Responsive Admin Login Screen for Open Fashion
 class LoginScreen extends ConsumerStatefulWidget {
@@ -257,8 +258,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Password Field
-                        Text('Password', style: AppTypography.labelMedium(isDark)),
+                        // Password Field Label + Forgot Password Link
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Password', style: AppTypography.labelMedium(isDark)),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const ForgotPasswordScreen(),
+                                  ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                'Forgot Password?',
+                                style: AppTypography.bodySmall(isDark).copyWith(
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _passwordController,
