@@ -47,8 +47,8 @@
 - [x] **1.3.2 [Flutter Admin]**: Admin Header Profile Chip, Role Badge & Logout Action
 - [x] **1.3.3 [Android Mobile]**: Customer Profile Screen (Account info, Edit Profile, Logout bottom sheet)
 
-### 1.4 Micro-Slice: Password Reset & Email Verification ➔ 📍 STARTING HERE
-- [ ] **1.4.1 [Backend]**: SHA-256 Token Generator + Forgot Password + Reset Password + Verify Email endpoints
+### 1.4 Micro-Slice: Password Reset & Email Verification ➔ 📍 IN PROGRESS
+- [x] **1.4.1 [Backend]**: SHA-256 Token Generator + Forgot Password + Reset Password + Verify Email endpoints
 - [ ] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation
 - [ ] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen
 

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Password complexity regular expression:
@@ -7,7 +7,8 @@ import { z } from 'zod';
  * - At least one numeric digit (?=.*\d)
  * - At least one special character (?=.*[@$!%*?&#^()_+\-=[\]{}|;:,.<>])
  */
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{}|;:,.<>])/;
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{}|;:,.<>])/;
 
 /**
  * Registration request validation schema (Zod 4 compliant).
@@ -16,33 +17,34 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{
 export const registerValidation = z.object({
   body: z.object({
     name: z
-      .string({ error: 'Full name is required' })
+      .string({ error: "Full name is required" })
       .trim()
-      .min(2, { error: 'Full name must be at least 2 characters' })
-      .max(100, { error: 'Full name cannot exceed 100 characters' }),
+      .min(2, { error: "Full name must be at least 2 characters" })
+      .max(100, { error: "Full name cannot exceed 100 characters" }),
 
     email: z
-      .string({ error: 'Email address is required' })
+      .string({ error: "Email address is required" })
       .trim()
       .toLowerCase()
-      .pipe(z.email({ error: 'Please provide a valid email address' })),
+      .pipe(z.email({ error: "Please provide a valid email address" })),
 
     password: z
-      .string({ error: 'Password is required' })
-      .min(8, { error: 'Password must be at least 8 characters long' })
-      .max(72, { error: 'Password cannot exceed 72 characters' })
+      .string({ error: "Password is required" })
+      .min(8, { error: "Password must be at least 8 characters long" })
+      .max(72, { error: "Password cannot exceed 72 characters" })
       .regex(passwordRegex, {
         error:
-          'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       }),
 
     phoneNumber: z
-      .string({ error: 'Phone number must be a string' })
+      .string({ error: "Phone number must be a string" })
       .trim()
       .pipe(
         z.e164({
-          error: 'Please provide a valid E.164 format phone number (e.g. +1234567890)',
-        })
+          error:
+            "Please provide a valid E.164 format phone number (e.g. +1234567890)",
+        }),
       )
       .optional(),
   }),
@@ -55,14 +57,14 @@ export const registerValidation = z.object({
 export const loginValidation = z.object({
   body: z.object({
     email: z
-      .string({ error: 'Email address is required' })
+      .string({ error: "Email address is required" })
       .trim()
       .toLowerCase()
-      .pipe(z.email({ error: 'Please provide a valid email address' })),
+      .pipe(z.email({ error: "Please provide a valid email address" })),
 
     password: z
-      .string({ error: 'Password is required' })
-      .min(1, { error: 'Password cannot be empty' }),
+      .string({ error: "Password is required" })
+      .min(1, { error: "Password cannot be empty" }),
   }),
 });
 
@@ -73,7 +75,63 @@ export const loginValidation = z.object({
 export const refreshTokenValidation = z.object({
   body: z.object({
     refreshToken: z
-      .string({ error: 'Refresh token is required' })
-      .min(1, { error: 'Refresh token cannot be empty' }),
+      .string({ error: "Refresh token is required" })
+      .min(1, { error: "Refresh token cannot be empty" }),
+  }),
+});
+
+/**
+ * Forgot Password request validation schema.
+ * Validates the `req.body` payload for POST /api/v1/auth/forgot-password.
+ */
+export const forgotPasswordValidation = z.object({
+  body: z.object({
+    email: z
+      .string({ error: "Email address is required" })
+      .trim()
+      .toLowerCase()
+      .pipe(z.email({ error: "Please provide a valid email address" })),
+  }),
+});
+
+/**
+ * Reset Password request validation schema.
+ * Validates the `req.body` payload for POST /api/v1/auth/reset-password.
+ */
+export const resetPasswordValidation = z.object({
+  body: z.object({
+    token: z
+      .string({ error: "Reset token is required" })
+      .trim()
+      .min(1, { error: "Reset token cannot be empty" }),
+
+    newPassword: z
+      .string({ error: "New password is required" })
+      .min(8, { error: "New password must be at least 8 characters long" })
+      .max(72, { error: "New password cannot exceed 72 characters" })
+      .regex(passwordRegex, {
+        error:
+          "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      }),
+  }),
+});
+
+/**
+ * Email Verification request validation schema.
+ * Validates the `req.body` payload for POST /api/v1/auth/verify-email.
+ */
+export const verifyEmailValidation = z.object({
+  body: z.object({
+    token: z
+      .string({ error: "Verification token or OTP is required" })
+      .trim()
+      .min(1, { error: "Verification token cannot be empty" }),
+
+    email: z
+      .string({ error: "Email must be a string" })
+      .trim()
+      .toLowerCase()
+      .pipe(z.email({ error: "Please provide a valid email address" }))
+      .optional(),
   }),
 });

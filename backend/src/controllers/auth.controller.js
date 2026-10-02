@@ -67,3 +67,62 @@ export const logout = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Handles Forgot Password request: initiates token & OTP generation.
+ * POST /api/v1/auth/forgot-password
+ */
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const result = await authService.requestPasswordReset(req.body.email);
+    return ApiResponse.success(res, result.message, {
+      devToken: result.devToken,
+      devOtp: result.devOtp,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Handles Password Reset execution: verifies token/OTP and sets new password.
+ * POST /api/v1/auth/reset-password
+ */
+export const resetPassword = async (req, res, next) => {
+  try {
+    const result = await authService.resetPassword(req.body);
+    return ApiResponse.success(res, result.message, null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Handles Sending Email Verification: sends token & OTP to the logged-in user.
+ * POST /api/v1/auth/send-verification
+ */
+export const sendVerification = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const result = await authService.sendEmailVerification(userId);
+    return ApiResponse.success(res, result.message, {
+      devToken: result.devToken,
+      devOtp: result.devOtp,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Handles Email Verification submission: validates token/OTP and marks account verified.
+ * POST /api/v1/auth/verify-email
+ */
+export const verifyEmail = async (req, res, next) => {
+  try {
+    const result = await authService.verifyEmail(req.body);
+    return ApiResponse.success(res, result.message, { user: result.user });
+  } catch (error) {
+    next(error);
+  }
+};
