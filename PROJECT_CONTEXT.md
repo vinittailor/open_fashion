@@ -23,29 +23,53 @@ open_fashion/
 ├── .agents/
 │   └── rules/
 │       └── project-workflow.md# [Status: Confirmed - Active]
-├── admin/                     # [Status: Confirmed - Initialized]
+├── admin/                     # [Status: Confirmed - Active]
 │   ├── lib/
 │   │   ├── core/
-│   │   │   ├── constants/breakpoints.dart
+│   │   │   ├── constants/api_endpoints.dart, app_strings.dart, breakpoints.dart
+│   │   │   ├── network/api_client.dart
+│   │   │   ├── storage/secure_storage_service.dart
 │   │   │   └── theme/app_colors.dart, app_typography.dart, app_theme.dart
+│   │   ├── features/
+│   │   │   ├── auth/
+│   │   │   │   ├── data/auth_repository.dart
+│   │   │   │   ├── domain/models/auth_action_model.dart, user_model.dart
+│   │   │   │   └── presentation/controllers/auth_controller.dart, auth_state.dart, screens/login_screen.dart, forgot_password_screen.dart
+│   │   │   └── profile/data/user_repository.dart
 │   │   └── main.dart
 │   ├── test/widget_test.dart
 │   └── pubspec.yaml
-├── backend/                   # [Status: Confirmed - Initialized]
+├── backend/                   # [Status: Confirmed - Active]
+│   ├── prisma/
+│   │   └── schema.prisma
 │   ├── src/
-│   │   ├── config/env.js
-│   │   ├── middleware/errorHandler.js
-│   │   ├── utils/logger.js
+│   │   ├── config/env.js, prisma.js, redis.js
+│   │   ├── controllers/auth.controller.js, user.controller.js
+│   │   ├── middleware/auth.middleware.js, errorHandler.js, role.middleware.js, validate.middleware.js
+│   │   ├── routes/auth.routes.js, index.js, user.routes.js
+│   │   ├── services/auth.service.js, user.service.js
+│   │   ├── utils/crypto.utils.js, jwt.utils.js, logger.js
+│   │   ├── validations/auth.validation.js, user.validation.js
 │   │   ├── app.js
 │   │   └── server.js
 │   ├── .env.example
 │   ├── .gitignore
 │   ├── docker-compose.yml
 │   └── package.json
-├── mobile/                    # [Status: Confirmed - Initialized]
+├── mobile/                    # [Status: Confirmed - Active]
 │   ├── app/
 │   │   ├── build.gradle.kts
 │   │   └── src/main/java/com/example/open_fashion/
+│   │       ├── core/
+│   │       │   ├── constants/ApiEndpoints.kt, AppStrings.kt
+│   │       │   ├── network/ApiClient.kt
+│   │       │   └── storage/TokenDataStore.kt
+│   │       ├── features/
+│   │       │   ├── auth/
+│   │       │   │   ├── data/remote/AuthApiService.kt, dto/AuthDto.kt, repository/AuthRepositoryImpl.kt
+│   │       │   │   ├── domain/model/User.kt, repository/AuthRepository.kt, usecase/
+│   │       │   │   └── presentation/login/, register/, forgotpassword/
+│   │       │   └── profile/
 │   │       ├── MainActivity.kt
 │   │       └── ui/theme/
 │   ├── gradle/

@@ -88,3 +88,50 @@ data class LoginResponseDto(
     @SerialName("message") val message: String? = null,
     @SerialName("data") val data: LoginDataDto? = null
 )
+
+/**
+ * Request payload for POST /api/v1/auth/forgot-password.
+ */
+@Serializable
+data class ForgotPasswordRequestDto(
+    @SerialName("email") val email: String
+)
+
+/**
+ * Request payload for POST /api/v1/auth/reset-password.
+ */
+@Serializable
+data class ResetPasswordRequestDto(
+    @SerialName("token") val token: String,
+    @SerialName("newPassword") val newPassword: String,
+    @SerialName("email") val email: String? = null
+)
+
+/**
+ * Request payload for POST /api/v1/auth/verify-email.
+ */
+@Serializable
+data class VerifyEmailRequestDto(
+    @SerialName("token") val token: String,
+    @SerialName("email") val email: String? = null
+)
+
+/**
+ * Nested container for action responses containing dev tokens and OTPs.
+ */
+@Serializable
+data class ActionDataDto(
+    @SerialName("devToken") val devToken: String? = null,
+    @SerialName("devOtp") val devOtp: String? = null
+)
+
+/**
+ * Root ApiResponse envelope for forgot-password, reset-password, and send-verification.
+ */
+@Serializable
+data class ActionResponseDto(
+    @SerialName("success") val success: Boolean,
+    @SerialName("statusCode") val statusCode: Int? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("data") val data: ActionDataDto? = null
+)

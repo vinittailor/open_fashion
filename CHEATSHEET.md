@@ -12,6 +12,9 @@
 5. [State Management Mental Models: BLoC vs Riverpod 2.0](#5-state-management-mental-models-bloc-vs-riverpod-20)
 6. [Error Handling: Express 5 Unhandled Rejections & Central Error Pipeline](#6-error-handling-express-5-unhandled-rejections--central-error-pipeline)
 7. [Validation: Authoritative Zod Schemas at System Boundaries](#7-validation-authoritative-zod-schemas-at-system-boundaries)
+8. [Redis Key-Value Lifecycle & Namespace Patterns](#8-redis-key-value-lifecycle--namespace-patterns)
+9. [Cryptography in Production: Bcrypt vs SHA-256 Token Hashing](#9-cryptography-in-production-bcrypt-vs-sha-256-token-hashing)
+10. [Flutter Riverpod: `AsyncNotifier` Mental Model & State Flow](#10-flutter-riverpod-asyncnotifier-mental-model--state-flow)
 
 ---
 
@@ -118,3 +121,55 @@ All client applications (Android + Flutter Admin) expect this exact schema:
 
 - **Rule**: Never trust client data. Validate at the very edge of the server before payloads touch controllers or database services.
 - **Fail-Fast Boot**: `env.js` parses environment variables with Zod upon server launch. If any required secret or database URL is missing, the application halts with exit code 1 immediately.
+
+---
+
+## 8. Redis Key-Value Lifecycle & Namespace Patterns
+
+In Open Fashion, Redis is structured with clear key namespaces and explicit Time-To-Live (TTL) expiration:
+
+| Purpose | Key Pattern | Data Stored | TTL | Strategy |
+|---|---|---|---|---|
+| **Refresh Token Whitelist** | `refresh_token:<userId>` | Active refresh token string | 7 days (`EX 604800`) | Replaced on every token refresh (Rotation) |
+| **Password Reset (URL Token)** | `pwd_reset:token:<sha256(rawToken)>` | User ID | 15 mins (`EX 900`) | Deleted immediately on successful reset |
+| **Password Reset (6-Digit OTP)** | `pwd_reset:otp:<email>` | JSON `{"otp": "123456", "userId": "..."}` | 15 mins (`EX 900`) | Deleted immediately on successful reset |
+| **Email Verification (URL Token)** | `verify_email:token:<sha256(rawToken)>` | User ID | 24 hours (`EX 86400`) | Deleted on verification; flags DB `isEmailVerified: true` |
+| **Email Verification (6-Digit OTP)** | `verify_email:otp:<email>` | JSON `{"otp": "654321", "userId": "..."}` | 15 mins (`EX 900`) | Deleted on verification |
+
+---
+
+## 9. Cryptography in Production: Bcrypt vs SHA-256 Token Hashing
+
+| Dimension | Bcrypt (`bcryptjs`) | SHA-256 (`crypto.createHash('sha256')`) |
+|---|---|---|
+| **Speed** | Intentionally **Slow & Computationally Expensive** (Salt rounds = 12, ~100ms) | **Extremely Fast** (Microseconds) |
+| **Purpose in Open Fashion** | User Passwords (`User.passwordHash`) | Short-lived Password Reset & Email Verification tokens |
+| **Why not Bcrypt for Reset Tokens?** | Bcrypt is too slow for temporary high-frequency lookup keys in Redis. Reset tokens already possess 256 bits of high entropy (`crypto.randomBytes(32)`), making brute-force mathematically impossible. |
+| **Why hash tokens in Redis at all?** | If Redis is dumped or compromised, attackers cannot read plain-text reset links. They only see un-invertible SHA-256 hashes. |
+
+---
+
+## 10. Flutter Riverpod: `AsyncNotifier` Mental Model & State Flow
+
+### Anatomy of Riverpod Auth Architecture:
+```
+[User Action] (e.g. click Login)
+       │
+       ▼
+[ref.read(authControllerProvider.notifier).login(email, pass)]
+       │
+       ▼
+1. state = state.copyWith(status: AuthStatus.authenticating, errorMessage: null);
+       │
+       ▼
+2. final user = await authRepository.login(...);
+       │
+       ▼
+3. state = state.copyWith(status: AuthStatus.authenticated, user: user);
+       │
+       ▼
+[UI automatically rebuilds via ref.watch(authControllerProvider)]
+```
+
+### Why `copyWith`?
+State in Riverpod / MVI is **immutable**. We never mutate fields directly (`state.status = ...` is illegal). Instead, `copyWith` instantiates a fresh state object with selectively overridden values, notifying all listening widgets safely.

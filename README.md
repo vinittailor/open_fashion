@@ -120,12 +120,35 @@ flutter run -d chrome
 ```bash
 cd mobile
 
+# Forward port 5000 from Android emulator/device to host machine
+adb reverse tcp:5000 tcp:5000
+
 # Build debug APK
 ./gradlew assembleDebug
+
+# Compile Kotlin sources (fast verification)
+./gradlew compileDebugKotlin
 
 # Run unit tests
 ./gradlew test
 ```
+
+---
+
+## ⚡ Current Ecosystem Capabilities
+
+| Feature Module | Backend (Express 5 + Prisma 7) | Flutter Admin (Riverpod 2.6) | Android Mobile (Compose M3) |
+|---|:---:|:---:|:---:|
+| **User Registration** | ✅ Completed | ✅ Completed | ✅ Completed |
+| **User Login & JWT Tokens** | ✅ Completed | ✅ Completed | ✅ Completed |
+| **Token Refresh & Auto-Login** | ✅ Completed | ✅ Completed | ✅ Completed |
+| **User Profile (`/me`)** | ✅ Completed | ✅ Completed | ✅ Completed |
+| **Role Guard (`ADMIN`/`CUSTOMER`)** | ✅ Completed | ✅ Completed | ✅ Completed |
+| **Forgot & Reset Password** | ✅ Completed | ✅ Completed | 📍 In Progress |
+| **Email Verification** | ✅ Completed | ✅ Completed | 📍 In Progress |
+| **Product & Catalog Management** | ⏳ Planned | ⏳ Planned | ⏳ Planned |
+| **Shopping Cart & Checkout** | ⏳ Planned | ⏳ Planned | ⏳ Planned |
+| **Real-time Order Feed (Socket.io)** | ⏳ Planned | ⏳ Planned | ⏳ Planned |
 
 ---
 

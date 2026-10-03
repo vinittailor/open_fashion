@@ -49,8 +49,8 @@
 
 ### 1.4 Micro-Slice: Password Reset & Email Verification ➔ 📍 IN PROGRESS
 - [x] **1.4.1 [Backend]**: SHA-256 Token Generator + Forgot Password + Reset Password + Verify Email endpoints
-- [x] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation
-- [ ] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen
+- [x] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation (with Riverpod controller & strongly typed models)
+- [-] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen (In-progress: DTOs & Service contract ready)
 
 ### 1.5 Micro-Slice: Admin User Management
 - [ ] **1.5.1 [Backend]**: Admin Users List API with Pagination, Role Filter & Soft Delete (`/api/v1/admin/users`)
@@ -159,4 +159,4 @@
 
 ## 📌 Status Summary
 - **Current Milestone**: `Feature Slice 1: Authentication & User Accounts`
-- **Immediate Next Step**: `Micro-Slice 1.4.1 [Backend] — Password Reset & Email Verification Endpoints`
+- **Immediate Next Step**: `Micro-Slice 1.4.3 [Android Mobile] — Forgot Password & OTP Verification UI (Step 2: Service & Repository Wiring)`

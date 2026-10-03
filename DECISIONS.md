@@ -186,3 +186,39 @@ Adopt a dedicated workspace rule file at `.agents/rules/project-workflow.md` enf
 
 #### 6. Learning Notes
 Teaches team engineering governance, pair-programming workflows, and documentation-driven development.
+
+---
+
+### ADR-006: Centralized API Endpoints, UI App Strings, and Strongly-Typed DTOs
+- **Date**: 2026-10-03
+- **Status**: ACCEPTED
+- **Deciders**: Principal Mentor & Lead Developer
+
+#### 1. Context & Problem Statement
+Hardcoded endpoint URI strings (e.g. `/api/v1/auth/login`) and UI text strings scattered across repository implementations, service classes, and composables lead to typos, difficult refactoring, lack of single-source-of-truth, and high friction when supporting internationalization (i18n) or environment URL switching. Additionally, parsing API responses as unstructured raw maps (e.g., `Map<String, dynamic>`) prevents compile-time safety and IDE autocompletion.
+
+#### 2. Decision
+1. **Centralized Endpoints**:
+   - Flutter Admin: [`admin/lib/core/constants/api_endpoints.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/constants/api_endpoints.dart)
+   - Android Mobile: [`mobile/app/src/main/java/com/example/open_fashion/core/constants/ApiEndpoints.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/core/constants/ApiEndpoints.kt)
+2. **Centralized UI Strings**:
+   - Flutter Admin: [`admin/lib/core/constants/app_strings.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/constants/app_strings.dart)
+   - Android Mobile: [`mobile/app/src/main/java/com/example/open_fashion/core/constants/AppStrings.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/core/constants/AppStrings.kt)
+3. **Strongly-Typed Data Models**:
+   - Replaced raw JSON map return types with structured models (e.g., `AuthActionModel` in Flutter and `ActionResponseDto` in Android) across all remote data sources and repositories.
+
+#### 3. Alternatives Considered
+- **In-file string literals**: Faster for initial prototyping but creates technical debt and breaks when backend paths evolve.
+- **Raw dynamic maps (`Map<String, dynamic>` / `JsonObject`)**: High risk of runtime key misspelling (`json['dev_otp']` vs `json['devOtp']`).
+
+#### 4. Reasons & Trade-offs
+- Guarantees compile-time validation for every network call and response field.
+- Provides immediate auto-completion across all IDE editors.
+- Paves a direct upgrade path for future localization (l10n / i18n).
+
+#### 5. Consequences
+- **Positive Impacts**: Refactoring an API path or UI copy takes a single-line edit; compile-time safety across Flutter and Kotlin.
+- **Negative / Neutral Impacts**: Requires creating constant definitions before building new features.
+
+#### 6. Learning Notes
+Teaches strict Clean Architecture separation of constants, compile-time type safety over dynamic typing, and scalable internationalization readiness.
