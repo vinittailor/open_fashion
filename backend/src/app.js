@@ -7,6 +7,7 @@ import { logger } from './utils/logger.js';
 import { errorHandler, NotFoundError } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 // Initialize Express 5 Application
 export const app = express();
@@ -66,6 +67,7 @@ app.get('/api/v1', (req, res) => {
 // 7. API Feature Slice Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // 8. Catch-all 404 Route for Undefined Endpoints
 app.use((req, res, next) => {

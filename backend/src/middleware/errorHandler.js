@@ -60,12 +60,13 @@ export const errorHandler = (err, req, res, next) => {
   let details = err.details || null;
 
   // 1. Handle Zod Validation Errors
-  if (err instanceof ZodError) {
+  if (err instanceof ZodError || err.name === 'ZodError') {
     statusCode = 422;
     errorCode = 'VALIDATION_ERROR';
     message = 'Request validation failed';
-    details = err.errors.map((e) => ({
-      field: e.path.join('.'),
+    const issues = err.issues || err.errors || [];
+    details = issues.map((e) => ({
+      field: Array.isArray(e.path) ? e.path.join('.') : String(e.path || ''),
       message: e.message,
     }));
   }

@@ -17,10 +17,21 @@ export const validate = (schema) => async (req, res, next) => {
       req.body = validatedData.body;
     }
     if (validatedData.query !== undefined) {
-      req.query = validatedData.query;
+      try {
+        req.query = validatedData.query;
+      } catch {
+        // Express 5 req.query may be getter-only
+        Object.keys(req.query).forEach((key) => delete req.query[key]);
+        Object.assign(req.query, validatedData.query);
+      }
+      req.validatedQuery = validatedData.query;
     }
     if (validatedData.params !== undefined) {
-      req.params = validatedData.params;
+      try {
+        req.params = validatedData.params;
+      } catch {
+        Object.assign(req.params, validatedData.params);
+      }
     }
 
     next();
