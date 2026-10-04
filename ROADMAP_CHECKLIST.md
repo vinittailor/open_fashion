@@ -62,7 +62,7 @@
 
 ### 2.1 Micro-Slice: Single File Upload
 - [x] **2.1.1 [Backend]**: Multer file parser + MIME validation + File Model Registry (`/api/v1/files/upload`)
-- [ ] **2.1.2 [Flutter Admin]**: File Upload Widget & Progress Indicator
+- [x] **2.1.2 [Flutter Admin]**: File Upload Widget & Progress Indicator (Dio multipart + Luxury dropzone + Progress bar)
 - [ ] **2.1.3 [Android Mobile]**: Avatar Picker & Upload integration
 
 ### 2.2 Micro-Slice: Product Media Gallery
