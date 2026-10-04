@@ -52,13 +52,13 @@
 - [x] **1.4.2 [Flutter Admin]**: Admin Forgot Password Screen & Reset Link Confirmation (with Riverpod controller & strongly typed models)
 - [x] **1.4.3 [Android Mobile]**: Forgot Password Screen + OTP/Email Verification Screen (Compose M3 + MVI ViewModel + Centralized Regex)
 
-### 1.5 Micro-Slice: Admin User Management ➔ 📍 IN PROGRESS
+### 1.5 Micro-Slice: Admin User Management ➔ [COMPLETED]
 - [x] **1.5.1 [Backend]**: Admin Users List API with Pagination, Role Filter & Soft Delete (`/api/v1/admin/users`)
-- [ ] **1.5.2 [Flutter Admin]**: Interactive User Management Data Table (View registered customers, toggle active/ban status)
+- [x] **1.5.2 [Flutter Admin]**: Interactive User Management Data Table (View registered customers, toggle active/ban status)
 
 ---
 
-## 📁 Feature Slice 2: Media & File Storage Registry
+## 📁 Feature Slice 2: Media & File Storage Registry ➔ 📍 IN PROGRESS
 
 ### 2.1 Micro-Slice: Single File Upload
 - [ ] **2.1.1 [Backend]**: Multer file parser + MIME validation + File Model Registry (`/api/v1/files/upload`)

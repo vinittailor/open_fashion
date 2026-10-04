@@ -8,6 +8,7 @@ import 'features/auth/presentation/controllers/auth_controller.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/register_screen.dart';
 import 'features/profile/presentation/widgets/profile_modal.dart';
+import 'features/users/presentation/screens/user_management_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -204,8 +205,8 @@ class _AdminShellScreenState extends ConsumerState<AdminShellScreen> {
 
   Widget _buildBodyContent(bool isDark) {
     if (_selectedIndex == 3) {
-      // Customers module hosts the User Registration / Invitation Form directly
-      return const RegisterScreen();
+      // Customers module displays the interactive User Management Data Table
+      return const UserManagementScreen();
     }
 
     return Center(
