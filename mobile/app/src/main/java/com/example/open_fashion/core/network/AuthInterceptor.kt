@@ -18,7 +18,10 @@ class AuthInterceptor(
         // Skip adding Authorization header on public authentication endpoints
         val isPublicEndpoint = path.contains("auth/login") ||
                 path.contains("auth/register") ||
-                path.contains("auth/refresh")
+                path.contains("auth/refresh") ||
+                path.contains("auth/forgot-password") ||
+                path.contains("auth/reset-password") ||
+                path.contains("auth/verify-email")
 
         val token = tokenManager.getAccessToken()
 

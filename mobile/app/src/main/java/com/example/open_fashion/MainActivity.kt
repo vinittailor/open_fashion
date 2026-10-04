@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.open_fashion.core.navigation.NavRoute
 import com.example.open_fashion.core.network.ApiClient
 import com.example.open_fashion.core.storage.TokenManager
+import com.example.open_fashion.features.auth.presentation.forgotpassword.ForgotPasswordScreen
 import com.example.open_fashion.features.auth.presentation.login.LoginScreen
 import com.example.open_fashion.features.auth.presentation.register.RegisterScreen
 import com.example.open_fashion.features.profile.presentation.ProfileScreen
@@ -59,6 +60,9 @@ class MainActivity : ComponentActivity() {
                             onNavigateToRegister = {
                                 navController.navigate(NavRoute.Register.route)
                             },
+                            onNavigateToForgotPassword = {
+                                navController.navigate(NavRoute.ForgotPassword.route)
+                            },
                             onLoginSuccess = {
                                 navController.navigate(NavRoute.Home.route) {
                                     popUpTo(NavRoute.Login.route) { inclusive = true }
@@ -81,7 +85,21 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // 3. Customer Home Screen
+                    // 3. Customer Forgot Password Screen
+                    composable(NavRoute.ForgotPassword.route) {
+                        ForgotPasswordScreen(
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            },
+                            onResetSuccess = {
+                                navController.navigate(NavRoute.Login.route) {
+                                    popUpTo(NavRoute.ForgotPassword.route) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    // 4. Customer Home Screen
                     composable(NavRoute.Home.route) {
                         val user = tokenManager.getUser()
                         CustomerHomeScreen(
@@ -99,7 +117,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // 4. Customer Profile Screen
+                    // 5. Customer Profile Screen
                     composable(NavRoute.Profile.route) {
                         ProfileScreen(
                             onNavigateBack = {

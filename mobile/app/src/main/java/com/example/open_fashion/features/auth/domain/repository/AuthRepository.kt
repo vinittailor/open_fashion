@@ -1,6 +1,7 @@
 package com.example.open_fashion.features.auth.domain.repository
 
 import com.example.open_fashion.core.network.NetworkResult
+import com.example.open_fashion.features.auth.domain.model.AuthActionResult
 import com.example.open_fashion.features.auth.domain.model.AuthSession
 import com.example.open_fashion.features.auth.domain.model.User
 
@@ -53,4 +54,47 @@ interface AuthRepository {
      * @return [NetworkResult.Success] on completion or [NetworkResult.Error].
      */
     suspend fun logout(): NetworkResult<Unit>
+
+    /**
+     * Dispatches a password reset link/OTP to the registered email address.
+     *
+     * @param email The account email address.
+     * @return [NetworkResult.Success] containing [AuthActionResult] or [NetworkResult.Error].
+     */
+    suspend fun forgotPassword(
+        email: String
+    ): NetworkResult<AuthActionResult>
+
+    /**
+     * Resets account password using a validated token or 6-digit OTP.
+     *
+     * @param token Reset token string or OTP code.
+     * @param newPassword New password meeting complexity criteria.
+     * @param email Optional email address when using OTP-based reset.
+     * @return [NetworkResult.Success] containing [AuthActionResult] or [NetworkResult.Error].
+     */
+    suspend fun resetPassword(
+        token: String,
+        newPassword: String,
+        email: String? = null
+    ): NetworkResult<AuthActionResult>
+
+    /**
+     * Dispatches an email verification token/OTP for the currently authenticated user.
+     *
+     * @return [NetworkResult.Success] containing [AuthActionResult] or [NetworkResult.Error].
+     */
+    suspend fun sendEmailVerification(): NetworkResult<AuthActionResult>
+
+    /**
+     * Confirms customer email address ownership using token or OTP.
+     *
+     * @param token Verification token or 6-digit OTP code.
+     * @param email Optional email address when verifying via OTP.
+     * @return [NetworkResult.Success] containing [AuthActionResult] or [NetworkResult.Error].
+     */
+    suspend fun verifyEmail(
+        token: String,
+        email: String? = null
+    ): NetworkResult<AuthActionResult>
 }

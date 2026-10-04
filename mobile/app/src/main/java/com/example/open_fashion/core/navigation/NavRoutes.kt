@@ -18,5 +18,6 @@ sealed class NavRoute(val route: String) {
     }
     data object Login : NavRoute("auth_login")
     data object Register : NavRoute("auth_register")
+    data object ForgotPassword : NavRoute("auth_forgot_password")
     data object Profile : NavRoute("profile")
 }

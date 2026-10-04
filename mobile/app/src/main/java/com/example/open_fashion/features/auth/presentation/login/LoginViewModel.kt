@@ -3,6 +3,7 @@ package com.example.open_fashion.features.auth.presentation.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.open_fashion.core.constants.ValidationPatterns
 import com.example.open_fashion.core.network.NetworkResult
 import com.example.open_fashion.core.storage.TokenManager
 import com.example.open_fashion.features.auth.data.repository.AuthRepositoryImpl
@@ -26,10 +27,6 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    companion object {
-        private val EMAIL_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
-    }
-
     /**
      * Single intent processor for all user actions emitted from the Composable UI.
      */
@@ -46,7 +43,7 @@ class LoginViewModel(
     private fun updateEmail(email: String) {
         val error = when {
             email.isBlank() -> null
-            !EMAIL_REGEX.matches(email.trim()) -> "Please provide a valid email address"
+            !ValidationPatterns.isValidEmail(email) -> "Please provide a valid email address"
             else -> null
         }
         _uiState.update { it.copy(email = email, emailError = error, generalError = null) }
@@ -73,7 +70,7 @@ class LoginViewModel(
         val currentState = _uiState.value
 
         // Validate fields before network dispatch
-        val emailErr = if (!EMAIL_REGEX.matches(currentState.email.trim())) "Valid email is required" else null
+        val emailErr = if (!ValidationPatterns.isValidEmail(currentState.email)) "Valid email is required" else null
         val passErr = if (currentState.password.isEmpty()) "Password cannot be empty" else null
 
         if (emailErr != null || passErr != null) {

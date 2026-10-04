@@ -3,6 +3,7 @@ package com.example.open_fashion.features.auth.presentation.register
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.open_fashion.core.constants.ValidationPatterns
 import com.example.open_fashion.core.network.NetworkResult
 import com.example.open_fashion.features.auth.data.repository.AuthRepositoryImpl
 import com.example.open_fashion.features.auth.domain.repository.AuthRepository
@@ -23,11 +24,6 @@ class RegisterViewModel(
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
-
-    companion object {
-        private val EMAIL_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
-        private val PASSWORD_REGEX = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#^()_+\\-=\\[\\]{}|;:,.<>]).+\$")
-    }
 
     /**
      * Single intent processor for all user actions emitted from the Composable UI.
@@ -57,7 +53,7 @@ class RegisterViewModel(
     private fun updateEmail(email: String) {
         val error = when {
             email.isBlank() -> null
-            !EMAIL_REGEX.matches(email.trim()) -> "Please provide a valid email address"
+            !ValidationPatterns.isValidEmail(email) -> "Please provide a valid email address"
             else -> null
         }
         _uiState.update { it.copy(email = email, emailError = error, generalError = null) }
@@ -66,9 +62,8 @@ class RegisterViewModel(
     private fun updatePassword(password: String) {
         val error = when {
             password.isEmpty() -> null
-            password.length < 8 -> "Password must be at least 8 characters long"
+            !ValidationPatterns.isValidPassword(password) -> "Must be at least 8 characters with uppercase, lowercase, number & special character"
             password.length > 72 -> "Password cannot exceed 72 characters"
-            !PASSWORD_REGEX.matches(password) -> "Must include uppercase, lowercase, number & special character"
             else -> null
         }
         _uiState.update { it.copy(password = password, passwordError = error, generalError = null) }
@@ -91,8 +86,8 @@ class RegisterViewModel(
 
         // Validate all fields before network dispatch
         val nameErr = if (currentState.name.trim().length < 2) "Full name is required (min 2 chars)" else null
-        val emailErr = if (!EMAIL_REGEX.matches(currentState.email.trim())) "Valid email is required" else null
-        val passErr = if (!PASSWORD_REGEX.matches(currentState.password) || currentState.password.length < 8) {
+        val emailErr = if (!ValidationPatterns.isValidEmail(currentState.email)) "Valid email is required" else null
+        val passErr = if (!ValidationPatterns.isValidPassword(currentState.password)) {
             "Strong password is required (min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol)"
         } else null
 

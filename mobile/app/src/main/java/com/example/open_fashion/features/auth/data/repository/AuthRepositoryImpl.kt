@@ -12,6 +12,12 @@ import com.example.open_fashion.features.auth.data.remote.dto.UserDto
 import com.example.open_fashion.features.auth.domain.model.AuthSession
 import com.example.open_fashion.features.auth.domain.model.User
 import com.example.open_fashion.features.auth.domain.repository.AuthRepository
+import com.example.open_fashion.core.storage.TokenManager
+import com.example.open_fashion.features.auth.data.remote.dto.ForgotPasswordRequestDto
+import com.example.open_fashion.features.auth.data.remote.dto.ResetPasswordRequestDto
+import com.example.open_fashion.features.auth.data.remote.dto.VerifyEmailRequestDto
+import com.example.open_fashion.features.auth.domain.model.AuthActionResult
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -24,7 +30,8 @@ private const val TAG = "OpenFashionAuthRepo"
  * Concrete implementation of [AuthRepository] managing remote API interactions.
  */
 class AuthRepositoryImpl(
-    private val authApiService: AuthApiService = ApiClient.create()
+    private val authApiService: AuthApiService = ApiClient.create(),
+    private val tokenManager: TokenManager? = null
 ) : AuthRepository {
 
     override suspend fun register(
@@ -147,6 +154,159 @@ class AuthRepositoryImpl(
             Log.w(TAG, "Logout API error (ignored for local cleanup): ${e.message}")
             // Best-effort logout: treat as success for local clearing
             NetworkResult.Success(Unit)
+        }
+    }
+
+    override suspend fun forgotPassword(
+        email: String
+    ): NetworkResult<AuthActionResult> = withContext(Dispatchers.IO) {
+        try {
+            // 1. Create the strongly-typed request payload
+            val request = ForgotPasswordRequestDto(email = email)
+
+            // 2. Execute the HTTP POST call via Retrofit
+            val response = authApiService.forgotPassword(request)
+
+            // 3. Evaluate HTTP status code
+            if (response.isSuccessful) {
+                val body = response.body()
+                NetworkResult.Success(
+                    AuthActionResult(
+                        message = body?.message ?: "Password reset instructions dispatched.",
+                        devToken = body?.data?.devToken,
+                        devOtp = body?.data?.devOtp
+                    )
+                )
+            } else {
+                parseErrorResponse(response, "Failed to request password reset.")
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "ForgotPassword Network I/O Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = "Unable to connect to server. Please check your connection.",
+                throwable = e
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "ForgotPassword Unexpected Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = e.localizedMessage ?: "An unexpected error occurred during password reset request.",
+                throwable = e
+            )
+        }
+    }
+
+    override suspend fun resetPassword(
+        token: String,
+        newPassword: String,
+        email: String?
+    ): NetworkResult<AuthActionResult> = withContext(Dispatchers.IO) {
+        try {
+            // 1. Create the strongly-typed ResetPassword request payload
+            val request = ResetPasswordRequestDto(
+                token = token,
+                newPassword = newPassword,
+                email = email
+            )
+
+            // 2. Call Retrofit endpoint
+            val response = authApiService.resetPassword(request)
+
+            // 3. Check response status
+            if (response.isSuccessful) {
+                val body = response.body()
+                NetworkResult.Success(
+                    AuthActionResult(
+                        message = body?.message ?: "Password reset successfully. Please sign in.",
+                        devToken = body?.data?.devToken,
+                        devOtp = body?.data?.devOtp
+                    )
+                )
+            } else {
+                parseErrorResponse(response, "Failed to reset password. Invalid or expired token.")
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "ResetPassword Network I/O Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = "Unable to connect to server. Please check your connection.",
+                throwable = e
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "ResetPassword Unexpected Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = e.localizedMessage ?: "An unexpected error occurred during password reset.",
+                throwable = e
+            )
+        }
+    }
+
+    override suspend fun sendEmailVerification(): NetworkResult<AuthActionResult> = withContext(Dispatchers.IO) {
+        try {
+            // Header is automatically attached by AuthInterceptor in OkHttp!
+            val response = authApiService.sendEmailVerification()
+
+            if (response.isSuccessful) {
+                val body = response.body()
+                NetworkResult.Success(
+                    AuthActionResult(
+                        message = body?.message ?: "Verification email sent.",
+                        devToken = body?.data?.devToken,
+                        devOtp = body?.data?.devOtp
+                    )
+                )
+            } else {
+                parseErrorResponse(response, "Failed to send verification email.")
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "SendEmailVerification Network I/O Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = "Unable to connect to server. Please check your connection.",
+                throwable = e
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "SendEmailVerification Unexpected Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = e.localizedMessage ?: "An unexpected error occurred sending verification email.",
+                throwable = e
+            )
+        }
+    }
+
+    override suspend fun verifyEmail(
+        token: String,
+        email: String?
+    ): NetworkResult<AuthActionResult> = withContext(Dispatchers.IO) {
+        try {
+            // 1. Create the strongly-typed VerifyEmail request payload
+            val request = VerifyEmailRequestDto(token = token, email = email)
+
+            // 2. Execute POST /api/v1/auth/verify-email
+            val response = authApiService.verifyEmail(request)
+
+            // 3. Evaluate response
+            if (response.isSuccessful) {
+                val body = response.body()
+                NetworkResult.Success(
+                    AuthActionResult(
+                        message = body?.message ?: "Email verified successfully.",
+                        devToken = body?.data?.devToken,
+                        devOtp = body?.data?.devOtp
+                    )
+                )
+            } else {
+                parseErrorResponse(response, "Failed to verify email. Invalid or expired token.")
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "VerifyEmail Network I/O Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = "Unable to connect to server. Please check your connection.",
+                throwable = e
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "VerifyEmail Unexpected Error: ${e.message}", e)
+            NetworkResult.Error(
+                message = e.localizedMessage ?: "An unexpected error occurred verifying email.",
+                throwable = e
+            )
         }
     }
 

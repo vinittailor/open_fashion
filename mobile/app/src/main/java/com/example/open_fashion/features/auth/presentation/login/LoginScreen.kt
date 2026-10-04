@@ -38,6 +38,7 @@ import com.example.open_fashion.ui.theme.*
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit = {},
+    onNavigateToForgotPassword: () -> Unit = {},
     onLoginSuccess: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -74,7 +75,8 @@ fun LoginScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent,
-        onNavigateToRegister = onNavigateToRegister
+        onNavigateToRegister = onNavigateToRegister,
+        onNavigateToForgotPassword = onNavigateToForgotPassword
     )
 }
 
@@ -87,6 +89,7 @@ fun LoginScreenContent(
     snackbarHostState: SnackbarHostState,
     onIntent: (LoginUiIntent) -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -188,7 +191,24 @@ fun LoginScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            // --- Forgot Password Link ---
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    text = "Forgot password?",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = AccentGold,
+                    modifier = Modifier.clickable { onNavigateToForgotPassword() }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // --- 3. Submit Button (Luxury Champagne Accent) ---
             Button(
