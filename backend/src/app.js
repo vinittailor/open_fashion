@@ -1,3 +1,4 @@
+import path from 'node:path';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -8,6 +9,8 @@ import { errorHandler, NotFoundError } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import fileRoutes from './routes/file.routes.js';
+
 
 // Initialize Express 5 Application
 export const app = express();
@@ -64,15 +67,28 @@ app.get('/api/v1', (req, res) => {
   });
 });
 
-// 7. API Feature Slice Routes
+// 7. Static Asset Serving for Uploaded Files
+app.use(
+  '/uploads',
+  express.static(path.resolve('uploads'), {
+    maxAge: '1d', // 1 day client cache
+    setHeaders: (res) => {
+      // Allows cross-origin image embedding in Flutter Web and Android
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
+  })
+);
+
+// 8. API Feature Slice Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/files', fileRoutes);
 
-// 8. Catch-all 404 Route for Undefined Endpoints
+// 9. Catch-all 404 Route for Undefined Endpoints
 app.use((req, res, next) => {
   next(new NotFoundError(`Cannot find endpoint [${req.method}] ${req.originalUrl} on this server`));
 });
 
-// 9. Central Global Error Handling Middleware
+// 10. Central Global Error Handling Middleware
 app.use(errorHandler);

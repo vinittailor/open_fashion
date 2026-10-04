@@ -61,7 +61,7 @@
 ## 📁 Feature Slice 2: Media & File Storage Registry ➔ 📍 IN PROGRESS
 
 ### 2.1 Micro-Slice: Single File Upload
-- [ ] **2.1.1 [Backend]**: Multer file parser + MIME validation + File Model Registry (`/api/v1/files/upload`)
+- [x] **2.1.1 [Backend]**: Multer file parser + MIME validation + File Model Registry (`/api/v1/files/upload`)
 - [ ] **2.1.2 [Flutter Admin]**: File Upload Widget & Progress Indicator
 - [ ] **2.1.3 [Android Mobile]**: Avatar Picker & Upload integration
 
