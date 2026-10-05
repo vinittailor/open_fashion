@@ -1,6 +1,12 @@
 package com.example.open_fashion.features.profile.presentation
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -13,18 +19,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.open_fashion.core.network.ApiClient
 import com.example.open_fashion.core.storage.TokenManager
+import com.example.open_fashion.features.media.data.repository.FileRepositoryImpl
 import com.example.open_fashion.features.profile.data.repository.UserRepositoryImpl
 import com.example.open_fashion.ui.theme.*
 
 /**
- * Stateful Root Composable for Customer Profile Screen.
+ * Stateful Root Composable for Customer Profile Screen with Avatar Upload & Coil Image Loading.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,12 +49,25 @@ fun ProfileScreen(
     val viewModel: ProfileViewModel = viewModel {
         ProfileViewModel(
             userRepository = UserRepositoryImpl(),
+            fileRepository = FileRepositoryImpl(
+                context = context.applicationContext,
+                fileApiService = ApiClient.create()
+            ),
             tokenManager = tokenManager
         )
     }
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Android 13+ Modern Photo Picker Launcher
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        uri?.let { selectedUri ->
+            viewModel.onIntent(ProfileUiIntent.OnAvatarSelected(selectedUri))
+        }
+    }
 
     LaunchedEffect(state.updateSuccessMessage) {
         state.updateSuccessMessage?.let { msg ->
@@ -94,21 +119,87 @@ fun ProfileScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 1. Luxury Customer Avatar
+            // 1. Luxury Customer Avatar with Camera Badge & Coil Loading
             Box(
-                modifier = Modifier
-                    .size(88.dp)
-                    .clip(CircleShape)
-                    .background(AccentGold),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.padding(top = 8.dp)
             ) {
-                Text(
-                    text = if (!user?.name.isNullOrBlank()) user!!.name.first().uppercase() else "U",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = PrimaryCharcoal
-                    )
-                )
+                Box(
+                    modifier = Modifier
+                        .size(96.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, AccentGold, CircleShape)
+                        .background(AccentGold.copy(alpha = 0.15f))
+                        .clickable(enabled = !state.isUploadingAvatar) {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!state.avatarUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(state.avatarUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "User Avatar",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                        )
+                    } else {
+                        Text(
+                            text = if (!user?.name.isNullOrBlank()) user!!.name.first().uppercase() else "U",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = AccentGold
+                            )
+                        )
+                    }
+
+                    // Translucent upload progress overlay
+                    if (state.isUploadingAvatar) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.5f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(28.dp),
+                                color = AccentGold,
+                                strokeWidth = 2.5.dp
+                            )
+                        }
+                    }
+                }
+
+                // Edit Camera Badge in bottom-right corner
+                Surface(
+                    shape = CircleShape,
+                    color = AccentGold,
+                    shadowElevation = 4.dp,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .clickable(enabled = !state.isUploadingAvatar) {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Outlined.PhotoCamera,
+                            contentDescription = "Change Avatar",
+                            tint = PrimaryCharcoal,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

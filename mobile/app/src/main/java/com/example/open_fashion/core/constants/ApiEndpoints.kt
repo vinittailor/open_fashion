@@ -30,4 +30,8 @@ object ApiEndpoints {
 
     // --- Orders & Checkout Endpoints ---
     const val ORDERS = "orders"
+    
+    // --- Media & File Endpoints ---
+    const val FILES_UPLOAD = "files/upload"
+
 }

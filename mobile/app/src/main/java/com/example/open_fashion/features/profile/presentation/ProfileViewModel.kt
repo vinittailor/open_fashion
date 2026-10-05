@@ -1,11 +1,13 @@
 package com.example.open_fashion.features.profile.presentation
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.open_fashion.core.network.NetworkResult
 import com.example.open_fashion.core.storage.TokenManager
 import com.example.open_fashion.features.auth.domain.model.AuthSession
+import com.example.open_fashion.features.media.domain.repository.FileRepository
 import com.example.open_fashion.features.profile.data.repository.UserRepositoryImpl
 import com.example.open_fashion.features.profile.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +19,11 @@ import kotlinx.coroutines.launch
 private const val TAG = "OpenFashionProfileVM"
 
 /**
- * MVI ViewModel managing Customer Profile viewing and editing.
+ * MVI ViewModel managing Customer Profile viewing, editing, and avatar uploads.
  */
 class ProfileViewModel(
     private val userRepository: UserRepository = UserRepositoryImpl(),
+    private val fileRepository: FileRepository? = null,
     private val tokenManager: TokenManager? = null
 ) : ViewModel() {
 
@@ -41,6 +44,7 @@ class ProfileViewModel(
             is ProfileUiIntent.OnEditNameChanged -> updateEditName(intent.name)
             is ProfileUiIntent.OnEditPhoneChanged -> updateEditPhone(intent.phone)
             is ProfileUiIntent.OnSubmitProfileUpdate -> submitProfileUpdate()
+            is ProfileUiIntent.OnAvatarSelected -> uploadAvatar(intent.uri)
             is ProfileUiIntent.OnDismissMessage -> _uiState.update {
                 it.copy(generalError = null, updateSuccessMessage = null)
             }
@@ -87,6 +91,38 @@ class ProfileViewModel(
                 }
                 is NetworkResult.Loading -> {
                     _uiState.update { it.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+
+    private fun uploadAvatar(uri: Uri) {
+        val repo = fileRepository ?: run {
+            Log.e(TAG, "Cannot upload avatar: FileRepository is null")
+            _uiState.update { it.copy(generalError = "Media upload service not initialized") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isUploadingAvatar = true, generalError = null) }
+
+            val result = repo.uploadFile(uri)
+            result.onSuccess { fileItem ->
+                Log.i(TAG, "Avatar uploaded successfully: ${fileItem.url}")
+                _uiState.update {
+                    it.copy(
+                        isUploadingAvatar = false,
+                        avatarUrl = fileItem.url,
+                        updateSuccessMessage = "Avatar uploaded successfully!"
+                    )
+                }
+            }.onFailure { error ->
+                Log.e(TAG, "Avatar upload failed: ${error.message}", error)
+                _uiState.update {
+                    it.copy(
+                        isUploadingAvatar = false,
+                        generalError = error.message ?: "Failed to upload avatar"
+                    )
                 }
             }
         }
