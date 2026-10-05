@@ -83,13 +83,9 @@ adb reverse tcp:5000 tcp:5000
 
 ---
 
-## 📡 2. Complete API cURL & JSON Response Models
+## 📡 2. Complete REST API Specifications & cURL Models
 
-Base URL: `http://localhost:5000`
-
----
-
-### 2.1 System Health Check
+### 2.1 Health Check (`GET /health`)
 
 #### cURL:
 ```bash
@@ -100,33 +96,18 @@ curl -X GET http://localhost:5000/health
 ```json
 {
   "status": "healthy",
-  "timestamp": "2026-10-03T16:00:00.000Z",
-  "uptime": 120.45,
-  "environment": "development",
-  "version": "1.0.0"
+  "timestamp": "2026-10-05T12:00:00.000Z",
+  "uptime": 124.5,
+  "services": {
+    "database": "connected",
+    "redis": "connected"
+  }
 }
 ```
 
 ---
 
-### 2.2 Base API Welcome Route
-
-#### cURL:
-```bash
-curl -X GET http://localhost:5000/api/v1
-```
-
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "message": "Welcome to Open Fashion Enterprise API v1"
-}
-```
-
----
-
-### 2.3 User Registration (`POST /api/v1/auth/register`)
+### 2.2 Customer Registration (`POST /api/v1/auth/register`)
 
 #### cURL:
 ```bash
@@ -135,7 +116,8 @@ curl -X POST http://localhost:5000/api/v1/auth/register \
   -d '{
     "name": "Jane Doe",
     "email": "jane@example.com",
-    "password": "SecurePassword123!"
+    "password": "Password123!",
+    "phoneNumber": "+1234567890"
   }'
 ```
 
@@ -145,16 +127,13 @@ curl -X POST http://localhost:5000/api/v1/auth/register \
   "success": true,
   "data": {
     "user": {
-      "id": "cm...unique_id",
+      "id": "usr_94b1c8a1-2d3e-4f5a-8b9c-0d1e2f3a4b5c",
       "name": "Jane Doe",
       "email": "jane@example.com",
       "role": "CUSTOMER",
+      "phoneNumber": "+1234567890",
       "isEmailVerified": false,
-      "createdAt": "2026-10-03T16:00:00.000Z"
-    },
-    "tokens": {
-      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "createdAt": "2026-10-05T12:00:00.000Z"
     }
   },
   "message": "User registered successfully"
@@ -163,7 +142,7 @@ curl -X POST http://localhost:5000/api/v1/auth/register \
 
 ---
 
-### 2.4 User Login (`POST /api/v1/auth/login`)
+### 2.3 Customer / Admin Login (`POST /api/v1/auth/login`)
 
 #### cURL:
 ```bash
@@ -171,7 +150,7 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "jane@example.com",
-    "password": "SecurePassword123!"
+    "password": "Password123!"
   }'
 ```
 
@@ -181,109 +160,89 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
   "success": true,
   "data": {
     "user": {
-      "id": "cm...unique_id",
+      "id": "usr_94b1c8a1-2d3e-4f5a-8b9c-0d1e2f3a4b5c",
       "name": "Jane Doe",
       "email": "jane@example.com",
-      "role": "CUSTOMER",
-      "isEmailVerified": false
+      "role": "CUSTOMER"
     },
-    "tokens": {
-      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    }
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "tokenType": "Bearer",
+    "expiresIn": 900
   },
-  "message": "Logged in successfully"
+  "message": "Login successful"
 }
 ```
 
 ---
 
-### 2.5 Refresh JWT Session (`POST /api/v1/auth/refresh`)
+### 2.4 Token Refresh (`POST /api/v1/auth/refresh`)
 
 #### cURL:
 ```bash
 curl -X POST http://localhost:5000/api/v1/auth/refresh \
   -H "Content-Type: application/json" \
   -d '{
-    "refreshToken": "YOUR_REFRESH_TOKEN"
+    "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
   }'
 ```
 
-#### Response Model (200 OK):
+---
+
+### 2.5 Single File Upload (`POST /api/v1/files/upload`)
+
+#### cURL:
+```bash
+curl -X POST http://localhost:5000/api/v1/files/upload \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -F "file=@/path/to/image.jpg"
+```
+
+#### Response Model (201 Created):
 ```json
 {
   "success": true,
+  "statusCode": 201,
+  "message": "File uploaded and registered successfully",
   "data": {
-    "tokens": {
-      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "file": {
+      "id": "c1f76023-e2ef-4573-8a3a-a1adcf6ceb92",
+      "filename": "img-1728148920123-a1b2c3d4e5.jpg",
+      "key": "avatars/img-1728148920123-a1b2c3d4e5.jpg",
+      "url": "http://localhost:5000/uploads/avatars/img-1728148920123-a1b2c3d4e5.jpg",
+      "mimeType": "image/jpeg",
+      "sizeBytes": 245812,
+      "provider": "LOCAL",
+      "isPublic": true,
+      "uploaderId": "usr_94b1c8a1-2d3e-4f5a-8b9c-0d1e2f3a4b5c",
+      "createdAt": "2026-10-05T12:00:00.000Z"
     }
-  },
-  "message": "Token refreshed successfully"
+  }
 }
 ```
 
 ---
 
-### 2.6 Get Profile (`GET /api/v1/users/me`)
+### 2.6 Get File Metadata (`GET /api/v1/files/:id`)
 
 #### cURL:
 ```bash
-curl -X GET http://localhost:5000/api/v1/users/me \
+curl -X GET http://localhost:5000/api/v1/files/c1f76023-e2ef-4573-8a3a-a1adcf6ceb92
+```
+
+---
+
+### 2.7 Delete File (`DELETE /api/v1/files/:id`)
+
+#### cURL:
+```bash
+curl -X DELETE http://localhost:5000/api/v1/files/c1f76023-e2ef-4573-8a3a-a1adcf6ceb92 \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "id": "cm...unique_id",
-    "name": "Jane Doe",
-    "email": "jane@example.com",
-    "role": "CUSTOMER",
-    "isEmailVerified": false,
-    "phone": null,
-    "avatar": null,
-    "createdAt": "2026-10-03T16:00:00.000Z"
-  },
-  "message": "User profile fetched successfully"
-}
-```
-
 ---
 
-### 2.7 Update Profile (`PATCH /api/v1/users/me`)
-
-#### cURL:
-```bash
-curl -X PATCH http://localhost:5000/api/v1/users/me \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Jane Updated",
-    "phone": "+1234567890"
-  }'
-```
-
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "id": "cm...unique_id",
-    "name": "Jane Updated",
-    "email": "jane@example.com",
-    "role": "CUSTOMER",
-    "phone": "+1234567890"
-  },
-  "message": "Profile updated successfully"
-}
-```
-
----
-
-### 2.8 Forgot Password Request (`POST /api/v1/auth/forgot-password`)
+### 2.8 Forgot Password (`POST /api/v1/auth/forgot-password`)
 
 #### cURL:
 ```bash
@@ -294,83 +253,25 @@ curl -X POST http://localhost:5000/api/v1/auth/forgot-password \
   }'
 ```
 
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "message": "If that email is registered, a password reset link has been sent.",
-    "devToken": "8f3b... (development only)",
-    "devOtp": "123456 (development only)"
-  },
-  "message": "Password reset email dispatched"
-}
-```
-
 ---
 
-### 2.9 Reset Password with Token or OTP (`POST /api/v1/auth/reset-password`)
+### 2.9 Reset Password (`POST /api/v1/auth/reset-password`)
 
-#### cURL (with Token):
+#### cURL:
 ```bash
 curl -X POST http://localhost:5000/api/v1/auth/reset-password \
   -H "Content-Type: application/json" \
   -d '{
     "token": "YOUR_RESET_TOKEN",
-    "password": "NewSecurePassword123!"
+    "newPassword": "NewPassword123!"
   }'
-```
-
-#### cURL (with OTP):
-```bash
-curl -X POST http://localhost:5000/api/v1/auth/reset-password \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "jane@example.com",
-    "otp": "123456",
-    "password": "NewSecurePassword123!"
-  }'
-```
-
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "message": "Password has been successfully reset. Please log in with your new password."
-  },
-  "message": "Password reset completed"
-}
 ```
 
 ---
 
-### 2.10 Send Email Verification (`POST /api/v1/auth/send-verification`)
+### 2.10 Verify Email (`POST /api/v1/auth/verify-email`)
 
 #### cURL:
-```bash
-curl -X POST http://localhost:5000/api/v1/auth/send-verification \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
-
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "message": "Verification email has been dispatched.",
-    "devToken": "3a1c... (development only)",
-    "devOtp": "654321 (development only)"
-  },
-  "message": "Verification email sent"
-}
-```
-
----
-
-### 2.11 Verify Email (`POST /api/v1/auth/verify-email`)
-
-#### cURL (with Token):
 ```bash
 curl -X POST http://localhost:5000/api/v1/auth/verify-email \
   -H "Content-Type: application/json" \
@@ -379,66 +280,33 @@ curl -X POST http://localhost:5000/api/v1/auth/verify-email \
   }'
 ```
 
-#### cURL (with OTP):
-```bash
-curl -X POST http://localhost:5000/api/v1/auth/verify-email \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "jane@example.com",
-    "otp": "654321"
-  }'
-```
-
-#### Response Model (200 OK):
-```json
-{
-  "success": true,
-  "data": {
-    "message": "Email address verified successfully!"
-  },
-  "message": "Email verified"
-}
-```
-
 ---
 
-### 2.12 Standard Error Envelopes
+### 2.11 Standard Error Envelopes
+
+#### 400 Bad Request (Invalid input / Unsupported MIME):
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Invalid file format. Supported formats: JPEG, PNG, WEBP, GIF, AVIF, HEIC, HEIF"
+}
+```
 
 #### 401 Unauthorized (Expired or Missing Token):
 ```json
 {
   "success": false,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Authentication token missing or expired"
-  }
+  "statusCode": 401,
+  "message": "Authentication token missing or expired"
 }
 ```
 
-#### 403 Forbidden (Role Guard):
+#### 413 Payload Too Large (File > 5MB):
 ```json
 {
   "success": false,
-  "error": {
-    "code": "FORBIDDEN",
-    "message": "You do not have permission to perform this action"
-  }
-}
-```
-
-#### 422 Unprocessable Entity (Zod Validation Failure):
-```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Request validation failed",
-    "details": [
-      {
-        "field": "password",
-        "message": "Password must contain at least one uppercase letter and one special character"
-      }
-    ]
-  }
+  "statusCode": 413,
+  "message": "File size exceeds 5MB limit"
 }
 ```

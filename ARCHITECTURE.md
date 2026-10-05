@@ -46,16 +46,20 @@
  - **Backend Service**:
    - Node.js ESM with Express 5, Prisma 7 with `@prisma/adapter-pg`, PostgreSQL 16 (Port 5433), Redis 7 (Port 6379).
    - Complete Authentication Subsystem: Password hashing (Bcrypt), JWT Access/Refresh tokens, Redis Refresh Token tracking, Redis-backed Password Reset (`pwd_reset:token:<hash>`, `pwd_reset:otp:<email>`), and Email Verification (`verify_email:token:<hash>`, `verify_email:otp:<email>`).
-   - Role-Based Access Control (`ADMIN`, `CUSTOMER`) on `/api/v1/users/me`.
+   - Role-Based Access Control (`ADMIN`, `CUSTOMER`) on `/api/v1/users/me` and Admin user management data table API.
+   - Media & File Storage Registry (`/api/v1/files/upload`, `/api/v1/files/:id`): Multer 2.4.0 with collision-proof naming and static asset serving.
  - **Admin Portal (`admin/`)**:
    - Flutter `3.41.1` & Dart `3.11.0` with `flutter_riverpod` (v2.6.1) `AsyncNotifier` state architecture.
    - Centralized constants ([`api_endpoints.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/constants/api_endpoints.dart), [`app_strings.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/constants/app_strings.dart)).
+   - Centralized Design System Widgets ([`luxury_button.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/widgets/luxury_button.dart), [`luxury_text_field.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/widgets/luxury_text_field.dart), [`luxury_badge.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/widgets/luxury_badge.dart)).
    - Responsive Layout Engine (`AdminShellScreen`, `AdaptiveLayout`, `ResponsiveBreakpoints`).
-   - Feature Modules: Authentication (`LoginScreen`, `ForgotPasswordScreen`), Profile Chip, Secure Storage persistence.
+   - Feature Modules: Authentication (`LoginScreen`, `ForgotPasswordScreen`), Profile Chip, File Upload (`LuxuryFileUploadWidget`), Secure Storage persistence.
  - **Mobile Client (`mobile/`)**:
    - Native Android with Kotlin `2.2.10`, AGP `9.4.0`, Jetpack Compose Material 3, minSdk `30`, targetSdk `37`.
    - Clean Architecture + MVI: Presentation (Compose UI + `ViewModel` State/Intent/Effect), Domain (Use Cases & Repository contracts), Data (Retrofit DTOs & Repository implementations).
+   - Centralized Design System Components ([`LuxuryButton.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/ui/components/LuxuryButton.kt), [`LuxuryTextField.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/ui/components/LuxuryTextField.kt), [`LuxuryBadge.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/ui/components/LuxuryBadge.kt), [`LuxuryCard.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/ui/components/LuxuryCard.kt)).
    - Centralized constants ([`ApiEndpoints.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/core/constants/ApiEndpoints.kt), [`AppStrings.kt`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/core/constants/AppStrings.kt)).
+   - Modern Photo Picker (`PickVisualMedia`) + Coil 3 image loading with crossfade animations.
    - Local Storage: Encrypted DataStore (`TokenDataStore`) for JWT caching and automatic authentication restoration.
  - **Documentation Standards**: Root-level governance defined in `AGENTS.md`, `ROADMAP_CHECKLIST.md`, `DECISIONS.md`.
  

@@ -1,20 +1,22 @@
 # Open Fashion — Backend Engineering Guidelines & Learning Rules
 
 ## 1. Domain & Responsibilities
-The `backend/` directory contains the core server application for the Open Fashion ecosystem. It is the single source of truth for business logic, database persistence, access control, and real-time event broadcasting.
+The `backend/` directory contains the core server application for the Open Fashion ecosystem. It is the single source of truth for business logic, database persistence, access control, media file registry, and real-time event broadcasting.
 
 **Strict Boundary Rule**: Never place Kotlin, Android, Dart, or Flutter code inside this directory.
 
 ---
 
 ## 2. Technology Stack & Runtime
-- **Runtime**: Node.js (Latest LTS)
+- **Runtime**: Node.js `v26.7.0` (Native ES Modules)
 - **Module System**: ES Modules (`import`/`export`, `"type": "module"` in `package.json`)
 - **HTTP Framework**: Express 5 (native async error routing)
-- **Database & ORM**: PostgreSQL with Prisma 6
-- **In-Memory Cache & Broker**: Redis
+- **Database & ORM**: PostgreSQL 16 (Port `5433`) with Prisma 7 (`@prisma/adapter-pg`)
+- **In-Memory Cache & Broker**: Redis 7 (Port `6379`) with `ioredis`
+- **File & Media Storage**: Multer 2.4.0 (MIME whitelist, crypto collision-free naming)
 - **Real-Time Engine**: Socket.io
 - **Request & Contract Validation**: Zod
+- **Testing**: Vitest (19 tests passing)
 - **Containerization**: Docker & Docker Compose
 
 ---
@@ -78,6 +80,7 @@ Every API request follows a strict, unidirectional pipeline:
   ```json
   {
     "success": true,
+    "statusCode": 200,
     "data": { ... },
     "message": "Resource created successfully"
   }
@@ -86,11 +89,9 @@ Every API request follows a strict, unidirectional pipeline:
   ```json
   {
     "success": false,
-    "error": {
-      "code": "VALIDATION_ERROR",
-      "message": "Invalid email format",
-      "details": [ ... ]
-    }
+    "statusCode": 422,
+    "message": "Validation error",
+    "errors": [ ... ]
   }
   ```
 
@@ -103,10 +104,9 @@ Every API request follows a strict, unidirectional pipeline:
 ---
 
 ## 5. Standard Backend Commands
-*(To be activated upon package.json initialization)*
-- `npm run dev`: Start development server with live reload (`--watch` or `nodemon`)
+- `npm run dev`: Start development server with live reload (`--watch`)
 - `npm run start`: Start production server
-- `npm run test`: Run test suite with Vitest/Jest
+- `npm test`: Run test suite with Vitest
 - `npx prisma migrate dev`: Run migrations in development
 - `npx prisma studio`: Open GUI database browser
 - `docker compose up -d`: Launch PostgreSQL and Redis containers

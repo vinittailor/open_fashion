@@ -1,7 +1,7 @@
 # Open Fashion — Android Mobile Engineering Guidelines & Learning Rules
 
 ## 1. Domain & Responsibilities
-The `mobile/` directory contains the customer-facing native Android mobile application. It is engineered with high visual fidelity, reactive state management, and robust offline caching.
+The `mobile/` directory contains the customer-facing native Android mobile application. It is engineered with high visual fidelity, reactive state management, centralized luxury design system components, and robust offline caching.
 
 **Strict Boundary Rule**: Never place Node.js, backend, Dart, or Flutter code inside this directory.
 
@@ -13,8 +13,11 @@ The `mobile/` directory contains the customer-facing native Android mobile appli
 - **SDK Target**: `compileSdk = 37`, `targetSdk = 37`, `minSdk = 30`
 - **UI Toolkit**: Jetpack Compose with Material 3 (`androidx-compose-bom = 2026.02.01`)
 - **Architecture**: Clean Architecture (Domain, Data, Presentation) + MVI (Model-View-Intent)
-- **Networking**: Retrofit & OkHttp (`[Planned]`)
-- **Local Persistence**: Room DB (`[Planned]`)
+- **Design System**: Centralized [`LuxuryButton`](./app/src/main/java/com/example/open_fashion/ui/components/LuxuryButton.kt), [`LuxuryTextField`](./app/src/main/java/com/example/open_fashion/ui/components/LuxuryTextField.kt), [`LuxuryBadge`](./app/src/main/java/com/example/open_fashion/ui/components/LuxuryBadge.kt), [`LuxuryCard`](./app/src/main/java/com/example/open_fashion/ui/components/LuxuryCard.kt)
+- **Image Loading**: Coil 3 (`coil.compose.AsyncImage`) with crossfade animations
+- **Networking**: Retrofit 2 & OkHttp 3 with Kotlinx Serialization
+- **Photo Picker**: Android 13+ Modern Photo Picker (`ActivityResultContracts.PickVisualMedia`)
+- **Local Persistence**: Room DB with KSP & Encrypted DataStore (`TokenManager`)
 - **Concurrency**: Kotlin Coroutines & Flow
 
 ---
@@ -24,18 +27,17 @@ The `mobile/` directory contains the customer-facing native Android mobile appli
 ```
 com.example.open_fashion/
 ├── core/
+│   ├── constants/     # ApiEndpoints, AppStrings
 │   ├── network/       # Retrofit builders, OkHttp interceptors, NetworkResult
-│   ├── database/      # Room database instance & TypeConverters
-│   ├── theme/         # Color.kt, Theme.kt, Type.kt (Material 3 tokens)
-│   └── components/    # Reusable Compose buttons, inputs, loading skeletons
-├── feature/
-│   ├── auth/
-│   ├── catalog/
-│   ├── cart/
-│   └── order/
-│       ├── data/          # DTOs, DAOs, RepositoryImpl, RemoteDataSource
-│       ├── domain/        # Pure Models, UseCases, Repository Interfaces
-│       └── presentation/  # Composables, ViewModel, ScreenContract (State/Intent/Effect)
+│   ├── storage/       # TokenManager (Encrypted session storage)
+│   └── database/      # Room database instance & TypeConverters
+├── features/
+│   ├── auth/          # DTOs, Repository, ViewModels, Screens
+│   ├── media/         # FileApiService, FileRepository, DTOs, Domain models
+│   └── profile/       # ProfileScreen, ProfileViewModel, ProfileContract
+├── ui/
+│   ├── components/    # LuxuryButton, LuxuryTextField, LuxuryBadge, LuxuryCard
+│   └── theme/         # Color.kt (60/30/10), Type.kt (Editorial Serif), Theme.kt
 └── MainActivity.kt
 ```
 
@@ -64,24 +66,27 @@ Every Compose screen is governed by a strict unidirectional contract:
 ```
 
 1. **`UiState` (Immutable Data Class)**: Holds the complete, single source of truth for the screen at any instant.
-2. **`UiIntent` (Sealed Interface)**: Explicit user actions (e.g. `AddToCartClicked`, `SearchQueryChanged`).
+2. **`UiIntent` (Sealed Interface)**: Explicit user actions (e.g. `AddToCartClicked`, `OnAvatarSelected`).
 3. **`UiEffect` (Sealed Interface)**: One-off side effects handled outside recomposition (e.g. `NavigateToCheckout`, `ShowSnackbar`).
 
 ---
 
 ## 5. Kotlin & Jetpack Compose Best Practices
 
-### 5.1. Kotlin Language Standards
+### 5.1. Mandatory Centralized Design System Component Reuse (ADR-007)
+- **Never write raw, ad-hoc Material/Compose buttons, text fields, cards, or badges directly inside screen files.**
+- All presentation screens must strictly reuse `LuxuryButton`, `LuxuryTextField`, `LuxuryBadge`, and `LuxuryCard`.
+
+### 5.2. Kotlin Language Standards
 - **Null Safety**: Leverage safe calls (`?.`), Elvis operator (`?:`), and avoid `!!` assertions entirely.
 - **Sealed Classes & Interfaces**: Use exhaustive `when` expressions for states, intents, and network results.
-- **Extension Functions**: Write clean, readable domain converters (e.g., `ProductDto.toDomain()`).
+- **Extension Functions**: Write clean, readable domain converters (e.g., `FileDto.toDomain()`).
 
-### 5.2. Compose Recomposition & State
+### 5.3. Compose Recomposition & State Hoisting
 - State must always flow **down**, and events must flow **up** (State Hoisting).
-- Use `remember` and `rememberSaveable` appropriately to retain state across recompositions and configuration changes.
-- Avoid passing `ViewModel` instances into leaf Composables; pass state and event lambdas for maximum reusability and previewability (`@Preview`).
+- Separate stateful wrapper composables (`Screen`) from stateless rendering composables (`Content`) to enable instant `@Preview` support in Android Studio.
 
-### 5.3. Coroutines & Lifecycle Safety
+### 5.4. Coroutines & Lifecycle Safety
 - Launch UI coroutines in `viewModelScope`.
 - Collect Flows in Composables using `collectAsStateWithLifecycle()` from `androidx.lifecycle.runtime.compose` to prevent collecting events while the app is in the background.
 
@@ -89,6 +94,7 @@ Every Compose screen is governed by a strict unidirectional contract:
 
 ## 6. Confirmed Gradle Commands
 - Build Debug APK: `./gradlew assembleDebug`
+- Fast Kotlin Compile: `./gradlew compileDebugKotlin`
 - Run Unit Tests: `./gradlew test`
-- Run Android UI Instrumentation Tests: `./gradlew connectedCheck`
+- Run UI Instrumentation Tests: `./gradlew connectedCheck`
 - Clean Build Cache: `./gradlew clean`

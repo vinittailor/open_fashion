@@ -173,3 +173,38 @@ In Open Fashion, Redis is structured with clear key namespaces and explicit Time
 
 ### Why `copyWith`?
 State in Riverpod / MVI is **immutable**. We never mutate fields directly (`state.status = ...` is illegal). Instead, `copyWith` instantiates a fresh state object with selectively overridden values, notifying all listening widgets safely.
+
+---
+
+## 11. Modern Android Photo Picker vs Legacy Storage Permissions
+
+| Dimension | Legacy Storage (`READ_MEDIA_IMAGES`) | Modern Photo Picker (`PickVisualMedia`) |
+|---|---|---|
+| **Manifest Permission** | Requires `<uses-permission android:name="..." />` | **Zero permissions** required in `AndroidManifest.xml` |
+| **User Prompt** | Scary system dialog: *"Allow access to ALL photos?"* | Native, private system sheet isolated in OS process |
+| **Play Store Audit** | Strict audit / potential rejection | 100% compliant with Google Play privacy policies |
+| **Security Scope** | Broad access to user's entire media library | App only receives a temporary read grant for the **single selected URI** |
+
+---
+
+## 12. Scoped Storage & ContentResolver Streaming
+
+### Why can't Android apps use raw file paths (`/sdcard/...`)?
+Android Scoped Storage (API 30+) prevents apps from accessing global filesystem paths.
+- Photo pickers return a **`content://` URI** (e.g. `content://media/external/images/media/42`).
+- To read the image bytes, the app must ask the **`ContentResolver`** to open an input stream:
+  ```kotlin
+  val bytes = context.contentResolver.openInputStream(uri)?.use { stream ->
+      stream.readBytes()
+  }
+  ```
+- **Kotlin's `.use { ... }`**: Ensures the binary file stream is closed deterministically (equivalent to `try-finally`), preventing memory leaks and orphaned file handles.
+
+---
+
+## 13. Centralized UI Design System Component Architecture (ADR-007)
+
+### Why avoid ad-hoc Material/Compose styling in screens?
+1. **Brand Cohesion**: Centralizing `LuxuryButton`, `LuxuryTextField`, `LuxuryBadge`, and `LuxuryCard` enforces consistent luxury typography tracking, 2dp architectural corners, and 60/30/10 color rules.
+2. **Boilerplate Reduction**: Replaces 30 lines of `OutlinedTextFieldDefaults` and `ButtonColors` on every screen with a clean, single-line composable/widget.
+3. **Global Upgrades**: Changing a global token (e.g. button corner radius or focus gold border) takes effect across the entire app with a single file modification.
