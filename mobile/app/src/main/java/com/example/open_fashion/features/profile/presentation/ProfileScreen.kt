@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +40,7 @@ import com.example.open_fashion.core.storage.TokenManager
 import com.example.open_fashion.features.auth.domain.model.User
 import com.example.open_fashion.features.media.data.repository.FileRepositoryImpl
 import com.example.open_fashion.features.profile.data.repository.UserRepositoryImpl
+import com.example.open_fashion.ui.components.*
 import com.example.open_fashion.ui.theme.*
 
 /**
@@ -246,110 +247,65 @@ fun ProfileContent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Surface(
-                color = AccentGoldLight,
-                shape = RoundedCornerShape(4.dp),
-                border = BorderStroke(0.5.dp, AccentGold.copy(alpha = 0.4f))
-            ) {
-                Text(
-                    text = user?.role ?: "CUSTOMER",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.5.sp,
-                        color = AccentGoldDark
-                    ),
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
-            }
+            // Reusable Luxury Role Badge
+            LuxuryBadge(
+                text = user?.role ?: "CUSTOMER",
+                variant = BadgeVariant.GOLD
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // 2. Info Cards with Hairline Border
-            Card(
-                colors = CardDefaults.cardColors(containerColor = SurfaceLight),
-                border = BorderStroke(1.dp, BorderLight),
-                shape = RoundedCornerShape(4.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(18.dp)) {
-                    ProfileInfoRow(
-                        icon = Icons.Outlined.Email,
-                        label = "EMAIL ADDRESS",
-                        value = user?.email ?: "—"
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 14.dp),
-                        thickness = 0.8.dp,
-                        color = BorderLight
-                    )
-                    ProfileInfoRow(
-                        icon = Icons.Outlined.Phone,
-                        label = "PHONE NUMBER",
-                        value = user?.phoneNumber ?: "Not provided"
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 14.dp),
-                        thickness = 0.8.dp,
-                        color = BorderLight
-                    )
-                    ProfileInfoRow(
-                        icon = Icons.Outlined.VerifiedUser,
-                        label = "EMAIL VERIFICATION",
-                        value = if (user?.isEmailVerified == true) "Verified" else "Pending Verification",
-                        isVerified = user?.isEmailVerified == true
-                    )
-                }
+            // 2. Info Cards using Reusable LuxuryCard
+            LuxuryCard {
+                ProfileInfoRow(
+                    icon = Icons.Outlined.Email,
+                    label = "EMAIL ADDRESS",
+                    value = user?.email ?: "—"
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 14.dp),
+                    thickness = 0.8.dp,
+                    color = BorderLight
+                )
+                ProfileInfoRow(
+                    icon = Icons.Outlined.Phone,
+                    label = "PHONE NUMBER",
+                    value = user?.phoneNumber ?: "Not provided"
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 14.dp),
+                    thickness = 0.8.dp,
+                    color = BorderLight
+                )
+                ProfileInfoRow(
+                    icon = Icons.Outlined.VerifiedUser,
+                    label = "EMAIL VERIFICATION",
+                    value = if (user?.isEmailVerified == true) "Verified" else "Pending Verification",
+                    isVerified = user?.isEmailVerified == true
+                )
             }
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 3. Action Buttons with Editorial Sharp Corners
-            Button(
-                onClick = { onIntent(ProfileUiIntent.OnOpenEditSheet) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AccentGold,
-                    contentColor = PrimaryCharcoal
-                ),
-                shape = RoundedCornerShape(2.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Icon(Icons.Outlined.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "EDIT PROFILE",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp
-                    )
-                )
-            }
+            // 3. Action Buttons using Reusable LuxuryButton
+            LuxuryButton(
+                text = "EDIT PROFILE",
+                variant = ButtonVariant.PRIMARY,
+                icon = Icons.Outlined.Edit,
+                onClick = { onIntent(ProfileUiIntent.OnOpenEditSheet) }
+            )
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            OutlinedButton(
-                onClick = onLogout,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = StatusError),
-                border = BorderStroke(1.dp, StatusError.copy(alpha = 0.3f)),
-                shape = RoundedCornerShape(2.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Icon(Icons.AutoMirrored.Outlined.Logout, contentDescription = null, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "SIGN OUT",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp
-                    )
-                )
-            }
+            LuxuryButton(
+                text = "SIGN OUT",
+                variant = ButtonVariant.DESTRUCTIVE,
+                icon = Icons.AutoMirrored.Outlined.Logout,
+                onClick = onLogout
+            )
         }
 
-        // 4. Edit Profile Bottom Sheet
+        // 4. Edit Profile Bottom Sheet with Reusable Luxury Components
         if (state.isEditSheetOpen) {
             ModalBottomSheet(
                 onDismissRequest = { onIntent(ProfileUiIntent.OnDismissEditSheet) },
@@ -372,57 +328,33 @@ fun ProfileContent(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    OutlinedTextField(
+                    LuxuryTextField(
                         value = state.editName,
                         onValueChange = { onIntent(ProfileUiIntent.OnEditNameChanged(it)) },
-                        label = { Text("Full Name") },
-                        isError = state.nameError != null,
-                        supportingText = { state.nameError?.let { Text(it, color = StatusError) } },
-                        shape = RoundedCornerShape(2.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        label = "Full Name",
+                        leadingIcon = Icons.Outlined.Person,
+                        errorMessage = state.nameError
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    OutlinedTextField(
+                    LuxuryTextField(
                         value = state.editPhone,
                         onValueChange = { onIntent(ProfileUiIntent.OnEditPhoneChanged(it)) },
-                        label = { Text("Phone Number") },
-                        placeholder = { Text("+1 (555) 000-0000") },
-                        shape = RoundedCornerShape(2.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        label = "Phone Number",
+                        placeholder = "+1 (555) 000-0000",
+                        leadingIcon = Icons.Outlined.Phone,
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone)
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
 
-                    Button(
-                        onClick = { onIntent(ProfileUiIntent.OnSubmitProfileUpdate) },
-                        enabled = !state.isUpdating,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AccentGold,
-                            contentColor = PrimaryCharcoal
-                        ),
-                        shape = RoundedCornerShape(2.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                    ) {
-                        if (state.isUpdating) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                color = PrimaryCharcoal,
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text(
-                                text = "SAVE CHANGES",
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 2.sp
-                                )
-                            )
-                        }
-                    }
+                    LuxuryButton(
+                        text = "SAVE CHANGES",
+                        variant = ButtonVariant.PRIMARY,
+                        isLoading = state.isUpdating,
+                        onClick = { onIntent(ProfileUiIntent.OnSubmitProfileUpdate) }
+                    )
                 }
             }
         }

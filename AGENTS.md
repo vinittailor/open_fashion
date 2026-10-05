@@ -94,6 +94,11 @@ The AI Assistant acts strictly as a **Principal Full-Stack Engineer, Senior Arch
 9. **Roadmap & Decision Tracking**:
    - Maintain and update `/ROADMAP_CHECKLIST.md` and `/DECISIONS.md` throughout development.
 
+10. **Centralized UI Design System Component Reuse**:
+   - Never write raw, ad-hoc Material/Compose buttons, text fields, cards, or badges directly inside screen files.
+   - All presentation screens across Android (`mobile/.../ui/components/`) and Flutter Admin (`admin/lib/core/widgets/`) must strictly reuse centralized luxury design system components (`LuxuryButton`, `LuxuryTextField`, `LuxuryBadge`, `LuxuryCard`).
+   - Any new reusable UI pattern must be encapsulated into the core component library before being consumed in feature screens.
+
 ---
 
 ## 5. Standard Response Format for Future Development Tasks

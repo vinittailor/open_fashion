@@ -222,3 +222,40 @@ Hardcoded endpoint URI strings (e.g. `/api/v1/auth/login`) and UI text strings s
 
 #### 6. Learning Notes
 Teaches strict Clean Architecture separation of constants, compile-time type safety over dynamic typing, and scalable internationalization readiness.
+
+---
+
+### ADR-007: Centralized Design System Component Library & Component Reuse
+- **Date**: 2026-10-05
+- **Status**: ACCEPTED
+- **Deciders**: Principal Mentor & Lead Developer
+
+#### 1. Context & Problem Statement
+Directly declaring raw Material/Compose widgets (`OutlinedTextField`, `ButtonDefaults.buttonColors`, `BorderStroke`, `CircularProgressIndicator`, `Surface`) with ad-hoc styling on every screen creates duplicate boilerplate code, visual inconsistencies across screen designs, and high maintenance overhead when changing brand tokens (e.g. corner radius, focus colors, typography tracking).
+
+#### 2. Decision
+Enforce a **Centralized Design System Component Library** across both Android and Flutter:
+1. **Android Jetpack Compose**: [`mobile/app/src/main/java/com/example/open_fashion/ui/components/`](file:///c:/Vicky/open_fashion/mobile/app/src/main/java/com/example/open_fashion/ui/components/)
+   - `LuxuryButton`: Standardized button with variants (`PRIMARY`, `SECONDARY`, `OUTLINE`, `DESTRUCTIVE`), loading spinner, and architectural corners.
+   - `LuxuryTextField`: Standardized input with floating labels, password visibility toggles, clear buttons, and animated error states.
+   - `LuxuryBadge`: Standardized luxury pills and status chips (`GOLD`, `SUCCESS`, `WARNING`, `ERROR`, `NEUTRAL`).
+   - `LuxuryCard`: Editorial container with 1px hairline borders and surface colors.
+2. **Flutter Admin**: [`admin/lib/core/widgets/`](file:///c:/Vicky/open_fashion/admin/lib/core/widgets/)
+   - `LuxuryButton`, `LuxuryTextField`, `LuxuryBadge`, `LuxuryCard`.
+
+Screens must **never** declare ad-hoc button/field styling directly; they must always compose these shared design system components.
+
+#### 3. Alternatives Considered
+- **In-Screen Ad-Hoc Styling**: Writing `OutlinedTextField` or `Button` with manual modifiers on each screen. Rejected due to code duplication and design drift.
+
+#### 4. Reasons & Trade-offs
+- Guarantees 100% brand fidelity and luxury visual consistency across the entire app.
+- Modifying a design token (e.g., changing button border radius from 4dp to 2dp) updates the entire app with a single file change.
+- Reduces screen boilerplate by 60–70%.
+
+#### 5. Consequences
+- **Positive Impacts**: Extremely clean screen composables/widgets, fast feature development, zero visual inconsistencies.
+- **Negative / Neutral Impacts**: New UI controls must be designed as reusable components first.
+
+#### 6. Learning Notes
+Teaches atomic design system principles, UI component encapsulation, and enterprise design-to-code workflows.
