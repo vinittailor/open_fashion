@@ -1,5 +1,6 @@
 package com.example.open_fashion.features.profile.presentation
 
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -13,6 +14,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,14 +35,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.open_fashion.core.network.ApiClient
 import com.example.open_fashion.core.storage.TokenManager
+import com.example.open_fashion.features.auth.domain.model.User
 import com.example.open_fashion.features.media.data.repository.FileRepositoryImpl
 import com.example.open_fashion.features.profile.data.repository.UserRepositoryImpl
 import com.example.open_fashion.ui.theme.*
 
 /**
- * Stateful Root Composable for Customer Profile Screen with Avatar Upload & Coil Image Loading.
+ * Stateful Root Composable for Customer Profile Screen.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit = {},
@@ -83,6 +87,35 @@ fun ProfileScreen(
         }
     }
 
+    ProfileContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onIntent = viewModel::onIntent,
+        onPickAvatar = {
+            photoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        },
+        onNavigateBack = onNavigateBack,
+        onLogout = onLogout
+    )
+}
+
+/**
+ * Stateless UI Content Composable (allows instant @Preview rendering).
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileContent(
+    state: ProfileUiState,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    onIntent: (ProfileUiIntent) -> Unit = {},
+    onPickAvatar: () -> Unit = {},
+    onNavigateBack: () -> Unit = {},
+    onLogout: () -> Unit = {}
+) {
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -97,7 +130,7 @@ fun ProfileScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -130,11 +163,7 @@ fun ProfileScreen(
                         .clip(CircleShape)
                         .border(2.dp, AccentGold, CircleShape)
                         .background(AccentGold.copy(alpha = 0.15f))
-                        .clickable(enabled = !state.isUploadingAvatar) {
-                            photoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        },
+                        .clickable(enabled = !state.isUploadingAvatar, onClick = onPickAvatar),
                     contentAlignment = Alignment.Center
                 ) {
                     if (!state.avatarUrl.isNullOrBlank()) {
@@ -185,11 +214,7 @@ fun ProfileScreen(
                         .align(Alignment.BottomEnd)
                         .size(30.dp)
                         .clip(CircleShape)
-                        .clickable(enabled = !state.isUploadingAvatar) {
-                            photoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        }
+                        .clickable(enabled = !state.isUploadingAvatar, onClick = onPickAvatar)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
@@ -242,13 +267,13 @@ fun ProfileScreen(
                         label = "Email Address",
                         value = user?.email ?: "—"
                     )
-                    Divider(modifier = Modifier.padding(vertical = 12.dp), color = BorderLight)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = BorderLight)
                     ProfileInfoRow(
                         icon = Icons.Outlined.Phone,
                         label = "Phone Number",
                         value = user?.phoneNumber ?: "Not provided"
                     )
-                    Divider(modifier = Modifier.padding(vertical = 12.dp), color = BorderLight)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = BorderLight)
                     ProfileInfoRow(
                         icon = Icons.Outlined.VerifiedUser,
                         label = "Email Verified",
@@ -261,7 +286,7 @@ fun ProfileScreen(
 
             // 3. Action Buttons
             Button(
-                onClick = { viewModel.onIntent(ProfileUiIntent.OnOpenEditSheet) },
+                onClick = { onIntent(ProfileUiIntent.OnOpenEditSheet) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AccentGold,
                     contentColor = PrimaryCharcoal
@@ -292,7 +317,7 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .height(48.dp)
             ) {
-                Icon(Icons.Outlined.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
+                Icon(Icons.AutoMirrored.Outlined.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("SIGN OUT")
             }
@@ -301,7 +326,7 @@ fun ProfileScreen(
         // 4. Edit Profile Bottom Sheet
         if (state.isEditSheetOpen) {
             ModalBottomSheet(
-                onDismissRequest = { viewModel.onIntent(ProfileUiIntent.OnDismissEditSheet) },
+                onDismissRequest = { onIntent(ProfileUiIntent.OnDismissEditSheet) },
                 containerColor = MaterialTheme.colorScheme.background
             ) {
                 Column(
@@ -318,7 +343,7 @@ fun ProfileScreen(
 
                     OutlinedTextField(
                         value = state.editName,
-                        onValueChange = { viewModel.onIntent(ProfileUiIntent.OnEditNameChanged(it)) },
+                        onValueChange = { onIntent(ProfileUiIntent.OnEditNameChanged(it)) },
                         label = { Text("Full Name") },
                         isError = state.nameError != null,
                         supportingText = { state.nameError?.let { Text(it, color = StatusError) } },
@@ -329,7 +354,7 @@ fun ProfileScreen(
 
                     OutlinedTextField(
                         value = state.editPhone,
-                        onValueChange = { viewModel.onIntent(ProfileUiIntent.OnEditPhoneChanged(it)) },
+                        onValueChange = { onIntent(ProfileUiIntent.OnEditPhoneChanged(it)) },
                         label = { Text("Phone Number") },
                         placeholder = { Text("+1234567890") },
                         modifier = Modifier.fillMaxWidth()
@@ -338,7 +363,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { viewModel.onIntent(ProfileUiIntent.OnSubmitProfileUpdate) },
+                        onClick = { onIntent(ProfileUiIntent.OnSubmitProfileUpdate) },
                         enabled = !state.isUpdating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AccentGold,
@@ -386,5 +411,64 @@ private fun ProfileInfoRow(
             Text(text = label, style = MaterialTheme.typography.bodySmall, color = TextSecondaryLight)
             Text(text = value, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
         }
+    }
+}
+
+// ====================================================================
+// Previews (Render instantly in Android Studio Preview tab)
+// ====================================================================
+
+@Preview(name = "Customer Profile — Light Theme", showBackground = true)
+@Composable
+private fun ProfileScreenPreviewLight() {
+    Open_fashionTheme(darkTheme = false) {
+        ProfileContent(
+            state = ProfileUiState(
+                user = User(
+                    id = "usr_123",
+                    name = "Serena Montgomery",
+                    email = "serena@openfashion.luxury",
+                    phoneNumber = "+1 (555) 019-2834",
+                    role = "CUSTOMER",
+                    isEmailVerified = true
+                )
+            )
+        )
+    }
+}
+
+@Preview(name = "Customer Profile — Dark Theme", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProfileScreenPreviewDark() {
+    Open_fashionTheme(darkTheme = true) {
+        ProfileContent(
+            state = ProfileUiState(
+                user = User(
+                    id = "usr_123",
+                    name = "Serena Montgomery",
+                    email = "serena@openfashion.luxury",
+                    phoneNumber = "+1 (555) 019-2834",
+                    role = "CUSTOMER",
+                    isEmailVerified = true
+                )
+            )
+        )
+    }
+}
+
+@Preview(name = "Customer Profile — Uploading State", showBackground = true)
+@Composable
+private fun ProfileScreenPreviewUploading() {
+    Open_fashionTheme(darkTheme = false) {
+        ProfileContent(
+            state = ProfileUiState(
+                user = User(
+                    id = "usr_123",
+                    name = "Serena Montgomery",
+                    email = "serena@openfashion.luxury"
+                ),
+                isUploadingAvatar = true
+            )
+        )
     }
 }
