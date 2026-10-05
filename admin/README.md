@@ -1,54 +1,52 @@
-# Open Fashion — Admin Portal (Flutter)
+# Open Fashion — Flutter Admin Dashboard (Web & Mobile)
 
-A cross-platform administrative dashboard engineered with Flutter for responsive Desktop Web and Mobile store operations.
+> Cross-platform responsive administrative back-office portal built with Flutter, Riverpod 2.6, Dio, and modern luxury design system components.
 
 ---
 
-## 🏛️ Architecture & State Management
+## 🛠️ Tech Stack & Architecture
 
 - **Framework**: Flutter `3.41.1` & Dart `3.11.0`
-- **State Management**: `flutter_riverpod` (v2.6.1) using `AsyncNotifier` pattern (see [ADR-004](../DECISIONS.md#adr-004-state-management-for-admin-dashboard-flutter-riverpod))
-- **Networking**: `dio` with central interceptors and error mappings
-- **Secure Persistence**: `flutter_secure_storage` for encrypted JWT storage
-- **Design System**: Custom typography (*Outfit* display + *Inter* body), luxury palette (`#111111` Dark, `#D4AF37` Gold accent), and responsive breakpoints (`Mobile < 600px`, `Tablet 600-1024px`, `Desktop > 1024px`).
-- **Centralized Constants**:
-  - API Endpoints: [`lib/core/constants/api_endpoints.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/constants/api_endpoints.dart)
-  - UI Strings: [`lib/core/constants/app_strings.dart`](file:///c:/Vicky/open_fashion/admin/lib/core/constants/app_strings.dart)
+- **Target Platforms**: Responsive Desktop Web (Chrome/Edge/Safari) & Mobile (iOS/Android)
+- **State Management**: `flutter_riverpod` (v2.6.1) with `StateNotifier` / `AsyncNotifier`
+- **Design System**: Centralized [`LuxuryButton`](./lib/core/widgets/luxury_button.dart), [`LuxuryTextField`](./lib/core/widgets/luxury_text_field.dart), [`LuxuryBadge`](./lib/core/widgets/luxury_badge.dart), [`LuxuryFileUploadWidget`](./lib/features/media/presentation/widgets/luxury_file_upload_widget.dart)
+- **Networking**: Dio (Multipart uploads, JWT Auth interceptor, stream progress callbacks)
+- **Data Tables & Charts**: Custom responsive data tables with pagination, `fl_chart`
+- **Storage**: `flutter_secure_storage` (JWT access/refresh tokens)
 
 ---
 
-## 🚀 Running the Dashboard
+## 📁 Project Directory Structure
 
-### 1. Web (Chrome)
+```
+admin/lib/
+├── core/
+│   ├── constants/         # ApiEndpoints, AppStrings, Breakpoints
+│   ├── network/           # ApiClient, AuthInterceptor
+│   ├── storage/           # TokenStorage (Secure storage)
+│   ├── theme/             # AppColors, AppTypography, AppTheme
+│   └── widgets/           # LuxuryButton, LuxuryTextField, LuxuryBadge
+└── features/
+    ├── auth/              # Admin Login, Forgot Password
+    ├── media/             # File upload widget, file models & repository
+    └── users/             # User management data table, status toggle, role filter
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install Dependencies
+```bash
+flutter pub get
+```
+
+### 2. Run Admin Web in Chrome
 ```bash
 flutter run -d chrome
 ```
 
-### 2. Mobile Device / Emulator
-```bash
-flutter run
-```
-
-### 3. Run Test Suite
+### 3. Run Unit & Widget Tests
 ```bash
 flutter test
-```
-
----
-
-## 📂 Directory Structure
-
-```
-lib/
-├── core/
-│   ├── constants/       # api_endpoints.dart, app_strings.dart, breakpoints.dart
-│   ├── network/         # api_client.dart (Dio client with Auth interceptors)
-│   ├── storage/         # secure_storage_service.dart
-│   └── theme/           # app_colors.dart, app_typography.dart, app_theme.dart
-├── features/
-│   ├── auth/            # LoginScreen, ForgotPasswordScreen, AuthController, AuthRepository
-│   ├── profile/         # Profile chip, UserRepository
-│   ├── products/        # (Upcoming) Product CRUD & SKU variant management
-│   └── orders/          # (Upcoming) Real-time Order feed & fulfillment
-└── main.dart            # ProviderScope entry & responsive AdminShellScreen
 ```
