@@ -1,0 +1,11 @@
+interface:
+  display_name: 'Figma Implement Design - Context MCP'
+  short_description: 'Implement Figma UIs via Figma-Context-MCP'
+  default_prompt: 'Use $Figma-Context-MCP-Skill to implement this Figma node with pixel-accurate fidelity in this codebase.'
+
+dependencies:
+  tools:
+    - type: 'mcp'
+      value: 'framelink-figma-context-mcp'
+      description: 'Framelink Figma-Context-MCP server (figma-developer-mcp)'
+      transport: 'stdio'
