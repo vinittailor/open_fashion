@@ -259,3 +259,37 @@ Screens must **never** declare ad-hoc button/field styling directly; they must a
 
 #### 6. Learning Notes
 Teaches atomic design system principles, UI component encapsulation, and enterprise design-to-code workflows.
+
+---
+
+### ADR-008: Adoption of RFC 9562 UUID v7 for Primary Keys & Distributed Entity IDs
+- **Date**: 2026-10-05
+- **Status**: ACCEPTED
+- **Deciders**: Principal Mentor & Lead Developer
+
+#### 1. Context & Problem Statement
+Relational databases (PostgreSQL and MySQL) index primary keys using B+ Trees. Standard random UUID v4 identifiers cause random write locations across index leaf pages, triggering expensive B+ Tree page splits, disk I/O amplification, buffer pool cache thrashing, and storage fragmentation (~50% page fill density). Conversely, traditional auto-incrementing integers (`BIGINT`) introduce severe security vulnerabilities (enumeration attacks), require synchronous database coordination, and prevent mobile clients from generating IDs offline.
+
+#### 2. Decision
+Adopt **RFC 9562 UUID v7** (`@default(uuid(7))` in Prisma 7) across all PostgreSQL database models and distributed client entity representations:
+1. **Timestamp-Ordered Prefix (48-bit Unix ms)**: Guarantees that new records are inserted monotonically at the rightmost edge of the primary key B+ Tree index, maximizing page density (~94%) and eliminating page splits.
+2. **Cryptographic Randomness (74-bit entropy)**: Prevents predictability and ensures collision-free distributed generation across backend microservices and Android mobile clients.
+3. **Native PostgreSQL Binary Storage**: Persisted internally as compact 16-byte binary `UUID` (128 bits), avoiding `VARCHAR(36)` text overhead.
+4. **Natural Chronological Sorting**: Enables effortless time-based sorting (`ORDER BY id DESC`) without requiring redundant composite indexes on `(createdAt, id)`.
+
+#### 3. Alternatives Considered
+- **UUID v4 (Random)**: High B+ Tree index fragmentation, poor buffer pool cache locality, and lack of temporal sortability.
+- **Auto-Incrementing `BIGINT`**: Leaks business volume metrics, vulnerable to ID enumeration attacks, impossible to generate IDs offline on Android.
+- **ULID / NanoID**: Excellent alternatives, but UUID v7 is the standardized RFC 9562 standard supported natively in PostgreSQL 17, Prisma 7, and all major HTTP/JSON client parsers (`z.string().uuid()`).
+
+#### 4. Reasons & Trade-offs
+- Solves the classic B+ Tree index fragmentation problem while retaining all distributed, unguessable, offline-first benefits of UUIDs.
+- 100% backward compatible with existing 36-character UUID string formats (`018e47a2-xxxx-7xxx-xxxx-xxxxxxxxxxxx`), requiring zero breaking changes in Android Kotlin models, Flutter Dart DTOs, or Zod schemas.
+
+#### 5. Consequences
+- **Positive Impacts**: High write throughput, zero index fragmentation, built-in chronological sorting, compact 16-byte native storage, offline client ID generation.
+- **Negative / Neutral Impacts**: Exposes approximate creation timestamp (milliseconds) within the ID (which is standard and expected for non-secret entity identifiers).
+
+#### 6. Learning Notes
+Teaches relational database storage engine internals (B+ Tree leaf pages, page splitting, buffer pool cache locality, clustered vs heap tables) and modern distributed systems identifier engineering (RFC 9562).
+

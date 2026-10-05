@@ -54,7 +54,7 @@ enum PaymentMethod {
 // ====================================================================
 
 model User {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid(7))
   email        String   @unique
   passwordHash String
   name         String
@@ -92,7 +92,7 @@ model User {
 }
 
 model Profile {
-  id          String    @id @default(uuid())
+  id          String    @id @default(uuid(7))
   userId      String    @unique
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   bio         String?
@@ -103,7 +103,7 @@ model Profile {
 }
 
 model Address {
-  id         String   @id @default(uuid())
+  id         String   @id @default(uuid(7))
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   street     String
@@ -126,7 +126,7 @@ model Address {
 // ====================================================================
 
 model File {
-  id        String          @id @default(uuid())
+  id        String          @id @default(uuid(7))
   filename  String // e.g. "silk-dress-101.webp"
   key       String // Path/key e.g. "products/silk-dress-101.webp"
   url       String // Public accessible URL
@@ -152,7 +152,7 @@ model File {
 // ====================================================================
 
 model Category {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid(7))
   name        String
   slug        String   @unique
   description String?
@@ -173,7 +173,7 @@ model Category {
 }
 
 model Product {
-  id            String   @id @default(uuid())
+  id            String   @id @default(uuid(7))
   title         String
   slug          String   @unique
   description   String
@@ -204,7 +204,7 @@ model Product {
 }
 
 model ProductVariant {
-  id              String  @id @default(uuid())
+  id              String  @id @default(uuid(7))
   productId       String
   product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   sku             String  @unique // e.g. "OF-DRS-BLK-M"
@@ -224,7 +224,7 @@ model ProductVariant {
 }
 
 model ProductImage {
-  id        String  @id @default(uuid())
+  id        String  @id @default(uuid(7))
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   fileId    String
@@ -242,7 +242,7 @@ model ProductImage {
 // ====================================================================
 
 model Cart {
-  id        String     @id @default(uuid())
+  id        String     @id @default(uuid(7))
   userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
@@ -253,7 +253,7 @@ model Cart {
 }
 
 model CartItem {
-  id        String         @id @default(uuid())
+  id        String         @id @default(uuid(7))
   cartId    String
   cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
   variantId String
@@ -265,7 +265,7 @@ model CartItem {
 }
 
 model Wishlist {
-  id        String         @id @default(uuid())
+  id        String         @id @default(uuid(7))
   userId    String         @unique
   user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     WishlistItem[]
@@ -276,7 +276,7 @@ model Wishlist {
 }
 
 model WishlistItem {
-  id         String   @id @default(uuid())
+  id         String   @id @default(uuid(7))
   wishlistId String
   wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
   productId  String
@@ -292,7 +292,7 @@ model WishlistItem {
 // ====================================================================
 
 model Order {
-  id          String      @id @default(uuid())
+  id          String      @id @default(uuid(7))
   orderNumber String      @unique // e.g. "OF-2026-8921"
   userId      String
   user        User        @relation(fields: [userId], references: [id], onDelete: Restrict)
@@ -322,7 +322,7 @@ model Order {
 }
 
 model OrderItem {
-  id           String         @id @default(uuid())
+  id           String         @id @default(uuid(7))
   orderId      String
   order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
   variantId    String?
@@ -340,7 +340,7 @@ model OrderItem {
 }
 
 model Payment {
-  id            String        @id @default(uuid())
+  id            String        @id @default(uuid(7))
   orderId       String
   order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
   amount        Decimal       @db.Decimal(10, 2)
@@ -361,7 +361,7 @@ model Payment {
 // ====================================================================
 
 model Review {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid(7))
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
