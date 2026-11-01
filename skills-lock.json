@@ -121,6 +121,96 @@
       "skillPath": "core/skills/cursor-reveal-hero/SKILL.md",
       "computedHash": "87be2d17ce4b5506391cf6b80743df25271c806fc63d004515cffb1d12a70bb7"
     },
+    "dart-add-unit-test": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-add-unit-test/SKILL.md",
+      "computedHash": "e5310cd56656f9db8533a612d69e201ee3644dc25f4b10e9ab38d0809440eeb2"
+    },
+    "dart-build-cli-app": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-build-cli-app/SKILL.md",
+      "computedHash": "e4bebe516b45ddd8a61e9ebbce8af27f242e5f18d43c1e9a0d28a2afdab78cea"
+    },
+    "dart-collect-coverage": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-collect-coverage/SKILL.md",
+      "computedHash": "abaf27c3fe7370e4daaea2c48f6efd8cc418042e2844649a9c2979bbfde8b7b1"
+    },
+    "dart-fix-runtime-errors": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-fix-runtime-errors/SKILL.md",
+      "computedHash": "5d297ccaf9a34c5939c80600ff8398437c0c6bd5d343093852b65559689fae1d"
+    },
+    "dart-generate-test-mocks": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-generate-test-mocks/SKILL.md",
+      "computedHash": "c5132b41dd1d00949d035f6d49fcaee79e95d056eb9652d465e7349f539d16a2"
+    },
+    "dart-migrate-to-checks-package": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-migrate-to-checks-package/SKILL.md",
+      "computedHash": "acb9d90dc41fa4410b523e8b60083f1d9fe1dd208c1579260d454c5ab4b3b3f5"
+    },
+    "dart-resolve-package-conflicts": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-resolve-package-conflicts/SKILL.md",
+      "computedHash": "4f8029de67b9b2da43eea381c6a320a0da8844d927781effcce6e07ac736dffd"
+    },
+    "dart-run-static-analysis": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-run-static-analysis/SKILL.md",
+      "computedHash": "7b143ff93bfb118ce9d72fca56cef4b38d75bfe9044367101db09cf32e6815ad"
+    },
+    "dart-setup-ffi-assets": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-setup-ffi-assets/SKILL.md",
+      "computedHash": "d1813c87bd7c556d1aeda275d4b4fa49ce3a3fc19d5d3d8c203c5b9aeaefac51"
+    },
+    "dart-use-doc-examples": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-use-doc-examples/SKILL.md",
+      "computedHash": "0b7477a66bd9d767d7d3994c1f08236368baae90250d962bd2ecb2a85237bfd2"
+    },
+    "dart-use-ffigen": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-use-ffigen/SKILL.md",
+      "computedHash": "fed0a97615cf80d8fbd59960a7a9d4497ef35af84de618e26492289924cbbcbd"
+    },
+    "dart-use-path-package": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-use-path-package/SKILL.md",
+      "computedHash": "a533ab92dc3308c205427b787f5bbcf847831a068a60340b8229745690d11bab"
+    },
+    "dart-use-pattern-matching": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-use-pattern-matching/SKILL.md",
+      "computedHash": "86026e8b8b97849e2355eeeb01b94b566939570aac37dfc5b9b33b297fa9983e"
+    },
+    "dart-use-primary-constructors": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-use-primary-constructors/SKILL.md",
+      "computedHash": "f3a388b5b11b2d3b6b6c494e2cc0fbd6c4f670b9bdeb97b024f4d18b4c1970f5"
+    },
+    "dart-write-documentation": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dart-write-documentation/SKILL.md",
+      "computedHash": "2c6cf741f5424f7f3ed805a09ec0c46b668bb9f9c2861988b3da42e558e5ae95"
+    },
     "delight": {
       "source": "educlopez/ui-craft",
       "sourceType": "github",
@@ -265,6 +355,66 @@
       "skillPath": "flow-checker/SKILL.md",
       "computedHash": "ca6b9960c2d73f590a68bdf97790010634a2c70e5945e5d2cdbff86399636400"
     },
+    "flutter-add-integration-test": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-add-integration-test/SKILL.md",
+      "computedHash": "4246d3ef5f21bdb7945899056b99cf3863e2bff645a132b41634caaded68da6d"
+    },
+    "flutter-add-widget-preview": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-add-widget-preview/SKILL.md",
+      "computedHash": "cba5e1368efe4d8c4ce1f9b4d442ce4870adbf4729244a33fd8b29c01541279a"
+    },
+    "flutter-add-widget-test": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-add-widget-test/SKILL.md",
+      "computedHash": "f4ea905ae155d1bca76f5431bf6ed31f31e3d40146493e7ae4285eac39ba4ffd"
+    },
+    "flutter-apply-architecture-best-practices": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-apply-architecture-best-practices/SKILL.md",
+      "computedHash": "baeb208b1cab90c559677626dbd101b96ba93f803cbed85122abdadeb3283a8b"
+    },
+    "flutter-build-responsive-layout": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-build-responsive-layout/SKILL.md",
+      "computedHash": "6d74a9504c4e355c4c62f6fcb6c6dc0df67b56dd6616bea199e4e58f75b7729b"
+    },
+    "flutter-fix-layout-issues": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-fix-layout-issues/SKILL.md",
+      "computedHash": "b2f9789451224e6df8d1d7ac63854c2f1beb30fa35d13ea06fbae9ba2b1b0a7f"
+    },
+    "flutter-implement-json-serialization": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-implement-json-serialization/SKILL.md",
+      "computedHash": "c2cf46854472a452dafa11f862f2bca3d9fe7286a5bb45d85b1efbcebc74b74e"
+    },
+    "flutter-setup-declarative-routing": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-setup-declarative-routing/SKILL.md",
+      "computedHash": "4c2ed2fd729230be581b15d84741688e206632fb2b38af320060cd3518b91179"
+    },
+    "flutter-setup-localization": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-setup-localization/SKILL.md",
+      "computedHash": "fc0811b1b775c52c1b8f7df600f5c52b83029aea0586b8cc55169812affd408f"
+    },
+    "flutter-use-http-package": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-use-http-package/SKILL.md",
+      "computedHash": "bd169b5cee731751f3b32f43c94cfe9495fc8e6c3eb621b785c69e38b77d0e19"
+    },
     "friction-log": {
       "source": "educlopez/ui-craft",
       "sourceType": "github",
@@ -312,6 +462,66 @@
       "sourceType": "github",
       "skillPath": "core/skills/internal-link-graph-architect/SKILL.md",
       "computedHash": "7ec628c78f41fb85c9c8c6f3e9789e4dda703a266a6251345455ae58997f8c9c"
+    },
+    "kotlin-backend-jpa-entity-mapping": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-backend-jpa-entity-mapping/SKILL.md",
+      "computedHash": "7829efe6ac903bbd9bf2acee6dfdf9b0b238c4fb5d3c6265e543a13dc2af72aa"
+    },
+    "kotlin-tooling-agp9-migration": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-agp9-migration/SKILL.md",
+      "computedHash": "83e8850784e288d7179fb5b7b0c7800fd1e428c7ed35f09cbb5a9bdcf4de0bea"
+    },
+    "kotlin-tooling-cocoapods-spm-migration": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-cocoapods-spm-migration/SKILL.md",
+      "computedHash": "5200d3e9970ab2f36eae86135ba30d7c19f7e9847415e6bd57122a22d2d59c17"
+    },
+    "kotlin-tooling-gradle-to-kotlin-toolchain-plugin": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-gradle-to-kotlin-toolchain-plugin/SKILL.md",
+      "computedHash": "ff6e14a30a196c15b18e373af2d062ea99a99dd841d930cb72204402fa6a85a9"
+    },
+    "kotlin-tooling-gradle-to-kotlin-toolchain-project": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-gradle-to-kotlin-toolchain-project/SKILL.md",
+      "computedHash": "9d99b59ad680a7120eb3a387f08455bdce5e3d23fe8f167f142b93b80ff0c401"
+    },
+    "kotlin-tooling-immutable-collections-0-5-x-migration": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-immutable-collections-0-5-x-migration/SKILL.md",
+      "computedHash": "6ec2ddc3efa4ea17471033719a807f9e37787384e0d2b60008b261ea3e18db32"
+    },
+    "kotlin-tooling-java-to-kotlin": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-java-to-kotlin/SKILL.md",
+      "computedHash": "732538daa557cc92224ea4f1ebd088e55b09fa1117859f326c877a3083a74cc9"
+    },
+    "kotlin-tooling-kotlin-toolchain": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-kotlin-toolchain/SKILL.md",
+      "computedHash": "237db8a970ce4a0132bc8e5ce4696f1da2caf883f7db401a5ec283292538b32d"
+    },
+    "kotlin-tooling-kotlin-toolchain-plugin-authoring": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-kotlin-toolchain-plugin-authoring/SKILL.md",
+      "computedHash": "38099b07151745130404fd1c3ce934447b275581163f41ac892c380b844dfa1c"
+    },
+    "kotlin-tooling-native-build-performance": {
+      "source": "Kotlin/kotlin-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/kotlin-tooling-native-build-performance/SKILL.md",
+      "computedHash": "e7d583298b420d608daf294530c211b001ea1af4162b2e73dd00ec275c617fb8"
     },
     "launch-readiness-auditor": {
       "source": "sergekostenchuk/ui-ux-agent-skill-system",

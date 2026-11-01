@@ -46,6 +46,8 @@ admin/build/
 # ==========================================
 .vscode/
 .idea/
+.claude/
+agent/
 *.iml
 .DS_Store
 Thumbs.db
