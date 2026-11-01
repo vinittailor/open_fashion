@@ -39,6 +39,15 @@ class MockFileRepository implements FileRepository {
   }
 
   @override
+  Future<List<FileModel>> uploadMultipleFiles({
+    required List<({String filename, List<int> bytes})> files,
+    String? productId,
+    void Function(int sentBytes, int totalBytes)? onProgress,
+  }) async {
+    return [];
+  }
+
+  @override
   Future<FileModel> fetchFileById(String fileId) async {
     return FileModel(
       id: fileId,

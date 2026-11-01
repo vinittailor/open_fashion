@@ -51,6 +51,44 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
+  Future<List<FileModel>> uploadMultipleFiles({
+    required List<({String filename, List<int> bytes})> files,
+    String? productId,
+    void Function(int sentBytes, int totalBytes)? onProgress,
+  }) async {
+    try {
+      final multipartFiles = files
+          .map((f) => MultipartFile.fromBytes(f.bytes, filename: f.filename))
+          .toList();
+
+      final formData = FormData.fromMap({
+        'files': multipartFiles,
+        if (productId != null) 'productId': productId,
+      });
+
+      final response = await _dio.post(
+        '/files/upload-multiple',
+        data: formData,
+        onSendProgress: (sent, total) {
+          if (onProgress != null && total > 0) {
+            onProgress(sent, total);
+          }
+        },
+      );
+
+      final filesList = response.data['data']['files'] as List<dynamic>;
+      return filesList
+          .map((f) => FileModel.fromJson(f as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      final message = e.response?.data?['error']?['message'] ??
+          e.response?.data?['message'] ??
+          'Batch file upload failed';
+      throw Exception(message);
+    }
+  }
+
+  @override
   Future<FileModel> fetchFileById(String fileId) async {
     try {
       final response = await _dio.get('/files/$fileId');

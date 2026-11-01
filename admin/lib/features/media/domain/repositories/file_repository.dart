@@ -9,6 +9,13 @@ abstract class FileRepository {
     void Function(int sentBytes, int totalBytes)? onProgress,
   });
 
+  /// Uploads multiple files in a batch with optional product linking and progress reporting
+  Future<List<FileModel>> uploadMultipleFiles({
+    required List<({String filename, List<int> bytes})> files,
+    String? productId,
+    void Function(int sentBytes, int totalBytes)? onProgress,
+  });
+
   /// Retrieves file metadata by ID
   Future<FileModel> fetchFileById(String fileId);
 

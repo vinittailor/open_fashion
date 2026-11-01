@@ -67,7 +67,7 @@
 
 ### 2.2 Micro-Slice: Product Media Gallery
 - [x] **2.2.1 [Backend]**: Multi-file upload endpoint & ProductImage relation linking
-- [ ] **2.2.2 [Flutter Admin]**: Drag-and-Drop Image Gallery & Primary Image Selector
+- [x] **2.2.2 [Flutter Admin]**: Drag-and-Drop Image Gallery & Primary Image Selector
 - [ ] **2.2.3 [Android Mobile]**: Coil Image Caching & Luxury Shimmer Placeholders
 
 ---
