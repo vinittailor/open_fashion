@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../config/env.dart';
 import '../storage/token_storage.dart';
 
-/// Base API URL configuration provider
+/// Base API URL configuration provider backed by compile-time obfuscated Envied config
 final apiBaseUrlProvider = Provider<String>((ref) {
-  // Default to localhost for Web/Desktop.
-  return 'http://localhost:5000/api/v1';
+  return Env.apiBaseUrl;
 });
 
 /// Singleton Dio HTTP Client Provider configured with timeouts, auth interceptor, and logger

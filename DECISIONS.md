@@ -293,3 +293,35 @@ Adopt **RFC 9562 UUID v7** (`@default(uuid(7))` in Prisma 7) across all PostgreS
 #### 6. Learning Notes
 Teaches relational database storage engine internals (B+ Tree leaf pages, page splitting, buffer pool cache locality, clustered vs heap tables) and modern distributed systems identifier engineering (RFC 9562).
 
+---
+
+### ADR-009: Adoption of Envied for Flutter Admin Environment Management & Secret Obfuscation
+- **Date**: 2026-11-01
+- **Status**: ACCEPTED
+- **Deciders**: Principal Mentor & Lead Developer
+
+#### 1. Context & Problem Statement
+In Flutter cross-platform applications, conventional environment management libraries such as `flutter_dotenv` require bundling the `.env` file into the app's `assets/` directory in `pubspec.yaml`. This introduces a severe security vulnerability: the `.env` file is packaged as plain text inside the APK/AAB zip file or served as a public static asset on Web, allowing anyone to inspect, decompile, or download internal URLs and configurations. Furthermore, `flutter_dotenv` relies on error-prone string-based map lookups (`dotenv.env['API_URL']`) which are nullable, lack compile-time validation, and incur runtime file I/O delays during app initialization.
+
+#### 2. Decision
+Adopt **`envied`** (`^1.3.10`) with `envied_generator` and `build_runner` for strongly-typed, compile-time validated, and obfuscated environment management in `admin/`:
+1. **Compile-Time Inlining**: Variables are read during compilation and inlined directly into Dart machine code/JavaScript, completely eliminating the need to bundle `.env` files into assets.
+2. **Byte-Mask XOR Obfuscation**: Critical strings are marked with `@EnviedField(obfuscate: true)`, transforming string literals into pairs of randomized byte arrays (`_enviedkey` and `_envieddata`) resolved at runtime via XOR bitwise operations, defeating string extraction and reverse engineering.
+3. **Strict Type Safety**: Exposes immutable static getters (e.g. `Env.apiBaseUrl`, `Env.environment`) with full IDE autocompletion and compile-time validation.
+4. **Zero Startup Latency**: Removes asynchronous file reading (`await dotenv.load()`) before `runApp()`.
+
+#### 3. Alternatives Considered
+- **`flutter_dotenv`**: Rejected due to asset packaging security flaws, lack of type safety, and startup file I/O overhead.
+- **`--dart-define` / `--dart-define-from-file`**: Good native approach, but lacks string obfuscation in the binary and requires complex command-line arguments during every `flutter run` / `flutter build` invocation.
+
+#### 4. Reasons & Trade-offs
+- Provides enterprise-grade client-side configuration security without bundling readable text files.
+- Trade-off: Requires running `dart run build_runner build` when `.env` definitions change.
+
+#### 5. Consequences
+- **Positive Impacts**: Completely eliminates asset bundle leakage, prevents binary string scraping via XOR obfuscation, provides compile-time type safety.
+- **Negative / Neutral Impacts**: Generated file `lib/core/config/env.g.dart` and `.env` must be strictly excluded from version control via `.gitignore`.
+
+#### 6. Learning Notes
+Teaches client-side binary reverse engineering defense, compile-time code generation with `source_gen`/`build_runner`, and bitwise XOR string obfuscation mechanics.
+
