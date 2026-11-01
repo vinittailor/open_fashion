@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import {
   uploadSingleFile,
+  uploadMultipleFiles,
+  linkFilesToProductGallery,
   getFileDetails,
   deleteFile,
 } from '../controllers/file.controller.js';
 import { authenticate } from '../middleware/auth.js';
-import { uploadSingle } from '../middleware/upload.js';
+import { uploadSingle, uploadMultiple } from '../middleware/upload.js';
 
 const router = Router();
 
@@ -15,6 +17,26 @@ const router = Router();
  * @access  Private (Authenticated Users)
  */
 router.post('/upload', authenticate, uploadSingle('file'), uploadSingleFile);
+
+/**
+ * @route   POST /api/v1/files/upload-multiple
+ * @desc    Upload multiple image files (multipart/form-data with field 'files', max 10)
+ *          Optionally associates with productId provided in form-data
+ * @access  Private (Authenticated Users)
+ */
+router.post(
+  '/upload-multiple',
+  authenticate,
+  uploadMultiple('files', 10),
+  uploadMultipleFiles
+);
+
+/**
+ * @route   POST /api/v1/files/link-product
+ * @desc    Link existing uploaded file IDs to a ProductImage gallery
+ * @access  Private (Authenticated Users)
+ */
+router.post('/link-product', authenticate, linkFilesToProductGallery);
 
 /**
  * @route   GET /api/v1/files/:id

@@ -3,7 +3,7 @@ import request from 'supertest';
 import { app } from '../src/app.js';
 import { signAccessToken } from '../src/utils/jwt.js';
 
-const { mockFileRecord } = vi.hoisted(() => {
+const { mockFileRecord, mockProduct, mockProductImage } = vi.hoisted(() => {
   const file = {
     id: '33333333-3333-4333-a333-333333333333',
     filename: 'img-test-123.jpg',
@@ -23,7 +23,22 @@ const { mockFileRecord } = vi.hoisted(() => {
     },
   };
 
-  return { mockFileRecord: file };
+  const product = {
+    id: '44444444-4444-4444-a444-444444444444',
+    title: 'Luxury Silk Dress',
+    slug: 'luxury-silk-dress',
+  };
+
+  const productImage = {
+    id: '55555555-5555-4555-a555-555555555555',
+    productId: product.id,
+    fileId: file.id,
+    url: file.url,
+    isPrimary: true,
+    sortOrder: 0,
+  };
+
+  return { mockFileRecord: file, mockProduct: product, mockProductImage: productImage };
 });
 
 // Mock Redis
@@ -39,32 +54,71 @@ vi.mock('../src/config/redis.js', () => ({
 }));
 
 // Mock Prisma
-vi.mock('../src/config/prisma.js', () => ({
-  prisma: {
-    file: {
-      create: vi.fn().mockImplementation(({ data }) => {
-        return Promise.resolve({
-          ...mockFileRecord,
-          ...data,
-          id: mockFileRecord.id,
-        });
-      }),
-      findUnique: vi.fn().mockImplementation(({ where }) => {
-        if (where.id === mockFileRecord.id) {
-          return Promise.resolve(mockFileRecord);
+vi.mock('../src/config/prisma.js', () => {
+  const fileOps = {
+    create: vi.fn().mockImplementation(({ data }) => {
+      return Promise.resolve({
+        ...mockFileRecord,
+        ...data,
+        id: mockFileRecord.id,
+      });
+    }),
+    findUnique: vi.fn().mockImplementation(({ where }) => {
+      if (where.id === mockFileRecord.id) {
+        return Promise.resolve(mockFileRecord);
+      }
+      return Promise.resolve(null);
+    }),
+    delete: vi.fn().mockImplementation(({ where }) => {
+      if (where.id === mockFileRecord.id) {
+        return Promise.resolve(mockFileRecord);
+      }
+      return Promise.resolve(null);
+    }),
+  };
+
+  const productOps = {
+    findUnique: vi.fn().mockImplementation(({ where }) => {
+      if (where.id === mockProduct.id) {
+        return Promise.resolve(mockProduct);
+      }
+      return Promise.resolve(null);
+    }),
+  };
+
+  const productImageOps = {
+    count: vi.fn().mockResolvedValue(0),
+    create: vi.fn().mockImplementation(({ data }) => {
+      return Promise.resolve({
+        ...mockProductImage,
+        ...data,
+        id: mockProductImage.id,
+      });
+    }),
+    updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+  };
+
+  const tx = {
+    file: fileOps,
+    product: productOps,
+    productImage: productImageOps,
+  };
+
+  return {
+    prisma: {
+      file: fileOps,
+      product: productOps,
+      productImage: productImageOps,
+      $transaction: vi.fn().mockImplementation(async (callback) => {
+        if (typeof callback === 'function') {
+          return await callback(tx);
         }
-        return Promise.resolve(null);
+        return Promise.all(callback);
       }),
-      delete: vi.fn().mockImplementation(({ where }) => {
-        if (where.id === mockFileRecord.id) {
-          return Promise.resolve(mockFileRecord);
-        }
-        return Promise.resolve(null);
-      }),
+      $on: vi.fn(),
     },
-    $on: vi.fn(),
-  },
-}));
+  };
+});
 
 describe('File Upload & Media Registry Endpoints (Micro-Slice 2.1.1)', () => {
   let userToken;
@@ -166,4 +220,88 @@ describe('File Upload & Media Registry Endpoints (Micro-Slice 2.1.1)', () => {
       expect(res.body.success).toBe(true);
     });
   });
+
+  describe('Multi-File Batch Upload (POST /api/v1/files/upload-multiple) - Micro-Slice 2.2.1', () => {
+    it('should return 401 when uploading multiple files without authentication', async () => {
+      const res = await request(app)
+        .post('/api/v1/files/upload-multiple')
+        .attach('files', Buffer.from('image1'), { filename: 'p1.jpg', contentType: 'image/jpeg' });
+
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
+    });
+
+    it('should upload a batch of files and return 201 with created file records', async () => {
+      const res = await request(app)
+        .post('/api/v1/files/upload-multiple')
+        .set('Authorization', `Bearer ${userToken}`)
+        .attach('files', Buffer.from('img-1-data'), { filename: 'gallery1.webp', contentType: 'image/webp' })
+        .attach('files', Buffer.from('img-2-data'), { filename: 'gallery2.webp', contentType: 'image/webp' });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(Array.isArray(res.body.data.files)).toBe(true);
+      expect(res.body.data.files.length).toBe(2);
+    });
+
+    it('should upload multiple files and link them to a product when productId is provided', async () => {
+      const res = await request(app)
+        .post('/api/v1/files/upload-multiple')
+        .set('Authorization', `Bearer ${userToken}`)
+        .field('productId', mockProduct.id)
+        .attach('files', Buffer.from('product-img-1'), { filename: 'prod1.jpg', contentType: 'image/jpeg' })
+        .attach('files', Buffer.from('product-img-2'), { filename: 'prod2.jpg', contentType: 'image/jpeg' });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.files).toBeDefined();
+      expect(res.body.data.productImages).toBeDefined();
+      expect(res.body.data.productImages.length).toBe(2);
+      expect(res.body.data.productImages[0].isPrimary).toBe(true);
+    });
+
+    it('should return 404 when associating upload with non-existent productId', async () => {
+      const res = await request(app)
+        .post('/api/v1/files/upload-multiple')
+        .set('Authorization', `Bearer ${userToken}`)
+        .field('productId', '99999999-9999-4999-a999-999999999999')
+        .attach('files', Buffer.from('fake-data'), { filename: 'prod.jpg', contentType: 'image/jpeg' });
+
+      expect(res.status).toBe(404);
+      expect(res.body.success).toBe(false);
+    });
+  });
+
+  describe('Link Files to Product Gallery (POST /api/v1/files/link-product) - Micro-Slice 2.2.1', () => {
+    it('should link existing files to a product and return 201 with productImages', async () => {
+      const res = await request(app)
+        .post('/api/v1/files/link-product')
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          productId: mockProduct.id,
+          images: [
+            { fileId: mockFileRecord.id, isPrimary: true, sortOrder: 0 },
+          ],
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.productImages).toBeDefined();
+      expect(res.body.data.productImages[0].isPrimary).toBe(true);
+    });
+
+    it('should return 404 when linking to a non-existent product', async () => {
+      const res = await request(app)
+        .post('/api/v1/files/link-product')
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          productId: '99999999-9999-4999-a999-999999999999',
+          images: [{ fileId: mockFileRecord.id }],
+        });
+
+      expect(res.status).toBe(404);
+      expect(res.body.success).toBe(false);
+    });
+  });
 });
+

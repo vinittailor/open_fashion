@@ -20,6 +20,39 @@ export const uploadSingleFile = async (req, res, next) => {
 };
 
 /**
+ * Handles batch multi-file upload with optional product gallery linking.
+ * POST /api/v1/files/upload-multiple
+ */
+export const uploadMultipleFiles = async (req, res, next) => {
+  try {
+    const result = await fileService.createMultipleFileRecords(
+      req,
+      req.files,
+      req.user?.id || null,
+      req.body.productId || null
+    );
+
+    return ApiResponse.created(res, 'Files uploaded successfully', result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Handles linking existing file IDs to a product gallery.
+ * POST /api/v1/files/link-product
+ */
+export const linkFilesToProductGallery = async (req, res, next) => {
+  try {
+    const { productId, images } = req.body;
+    const productImages = await fileService.linkFilesToProduct(productId, images);
+    return ApiResponse.created(res, 'Product images linked successfully', { productImages });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Handles fetching file metadata by ID.
  * GET /api/v1/files/:id
  */

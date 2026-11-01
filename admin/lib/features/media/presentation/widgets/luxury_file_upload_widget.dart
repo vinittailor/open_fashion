@@ -297,7 +297,7 @@ class LuxuryFileUploadWidget extends ConsumerWidget {
 
   Future<void> _pickAndUpload(FileUploadController controller) async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif', 'heic'],
         withData: true,

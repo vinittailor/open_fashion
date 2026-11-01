@@ -66,7 +66,7 @@
 - [x] **2.1.3 [Android Mobile]**: Avatar Picker & Upload integration
 
 ### 2.2 Micro-Slice: Product Media Gallery
-- [ ] **2.2.1 [Backend]**: Multi-file upload endpoint & ProductImage relation linking
+- [x] **2.2.1 [Backend]**: Multi-file upload endpoint & ProductImage relation linking
 - [ ] **2.2.2 [Flutter Admin]**: Drag-and-Drop Image Gallery & Primary Image Selector
 - [ ] **2.2.3 [Android Mobile]**: Coil Image Caching & Luxury Shimmer Placeholders
 

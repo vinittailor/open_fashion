@@ -68,6 +68,136 @@ export const createFileRecord = async (req, fileData, uploaderId = null) => {
   return fileRecord;
 };
 
+/**
+ * Registers multiple uploaded files in the PostgreSQL File model registry in a single batch,
+ * optionally linking them to a Product as ProductImage records.
+ *
+ * @param {import('express').Request} req - Express request
+ * @param {Express.Multer.File[]} filesData - Array of Multer file objects from req.files
+ * @param {string} [uploaderId] - UUID of the authenticated user
+ * @param {string} [productId] - Optional UUID of product to associate images with
+ * @returns {Promise<{ files: Array, productImages?: Array }>}
+ */
+export const createMultipleFileRecords = async (req, filesData, uploaderId = null, productId = null) => {
+  if (!filesData || !Array.isArray(filesData) || filesData.length === 0) {
+    throw new BadRequestError('No files were provided for upload');
+  }
+
+  const uploadsRoot = path.resolve('uploads');
+
+  // Verify product exists if productId is provided
+  if (productId) {
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundError(`Product with ID ${productId} not found`);
+    }
+  }
+
+  // Pre-calculate metadata and URLs for all uploaded files
+  const filePayloads = filesData.map((fileData) => {
+    const relativeSubfolder = path.relative(uploadsRoot, fileData.destination) || '';
+    const relativeKey = path.join(relativeSubfolder, fileData.filename).replace(/\\/g, '/');
+    const publicUrl = buildPublicFileUrl(req, relativeKey);
+
+    return {
+      filename: fileData.filename,
+      key: relativeKey,
+      url: publicUrl,
+      mimeType: fileData.mimetype,
+      sizeBytes: fileData.size,
+      provider: 'LOCAL',
+      isPublic: true,
+      uploaderId: uploaderId || null,
+    };
+  });
+
+  // Execute in an interactive transaction to guarantee consistency
+  return await prisma.$transaction(async (tx) => {
+    const createdFiles = [];
+    for (const payload of filePayloads) {
+      const record = await tx.file.create({ data: payload });
+      createdFiles.push(record);
+    }
+
+    let createdProductImages = [];
+    if (productId) {
+      const existingImagesCount = await tx.productImage.count({
+        where: { productId },
+      });
+
+      for (let i = 0; i < createdFiles.length; i++) {
+        const file = createdFiles[i];
+        const isPrimary = existingImagesCount === 0 && i === 0;
+        const pImg = await tx.productImage.create({
+          data: {
+            productId,
+            fileId: file.id,
+            url: file.url,
+            isPrimary,
+            sortOrder: existingImagesCount + i,
+          },
+        });
+        createdProductImages.push(pImg);
+      }
+    }
+
+    return {
+      files: createdFiles,
+      ...(productId ? { productImages: createdProductImages } : {}),
+    };
+  });
+};
+
+/**
+ * Links an array of existing file IDs to a product gallery.
+ *
+ * @param {string} productId - Product UUID
+ * @param {Array<{ fileId: string, isPrimary?: boolean, sortOrder?: number }>} imageLinks
+ * @returns {Promise<Array>} Created or updated ProductImage records
+ */
+export const linkFilesToProduct = async (productId, imageLinks) => {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
+  if (!product) {
+    throw new NotFoundError(`Product with ID ${productId} not found`);
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const results = [];
+    for (const link of imageLinks) {
+      const file = await tx.file.findUnique({
+        where: { id: link.fileId },
+      });
+      if (!file) {
+        throw new NotFoundError(`File with ID ${link.fileId} not found`);
+      }
+
+      if (link.isPrimary) {
+        // Demote previous primary images for this product
+        await tx.productImage.updateMany({
+          where: { productId, isPrimary: true },
+          data: { isPrimary: false },
+        });
+      }
+
+      const pImg = await tx.productImage.create({
+        data: {
+          productId,
+          fileId: file.id,
+          url: file.url,
+          isPrimary: link.isPrimary || false,
+          sortOrder: link.sortOrder || 0,
+        },
+      });
+      results.push(pImg);
+    }
+    return results;
+  });
+};
+
 
 /**
  * Retrieves a file metadata record by ID.
